@@ -44,9 +44,9 @@ public class AlarmTest extends InterruptHandler {
   public static void start(String[] args) {
     Debug.println('t', "Entering AlarmTest");
 
-    t1 = new Timer(new AlarmTest(1), true);
-    t2 = new Timer(new AlarmTest(2), true);
-    t3 = new Timer(new AlarmTest(3), true);
+    t1 = new Timer("AlarmTest timer 1", new AlarmTest(1), true);
+    t2 = new Timer("AlarmTest timer 2", new AlarmTest(2), true);
+    t3 = new Timer("AlarmTest timer 3", new AlarmTest(3), true);
 
     t1.cancel();
     //t2.cancel();
