@@ -24,7 +24,8 @@ the rewrite was to reorganize some things that I found awkward to explain
 to students, and to make them more like the way I would naturally
 expect a real operating system to be.
 
-This code represents a rewrite I did during the summer of 2003.
+This code represents a rewrite I did during the summer of 2003, with
+further rewriting and bug fixes during the fall semester of 2004.
 Though I have still tried to keep the traditional NACHOS structure,
 I have made extensive use of packages to try to make it possible for
 students to look at smaller amounts of the code at once and to make
