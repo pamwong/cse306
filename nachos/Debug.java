@@ -128,7 +128,7 @@ class Debug {
       case 'c':
 	byte tmp[] = new byte[1];
 	tmp[0] = (byte)((Number) o[nextObj++]).intValue();
-	System.out.print(new String(tmp, 0));
+	System.out.print(new String(tmp));
 	pcFlag = lFlag = false;
 	continue;
 
