@@ -1,6 +1,6 @@
 JC= javac -classpath machine.jar:.
 
-all:
+classes: machine.jar
 	${JC} nachos/kernel/Nachos.java
 
 machine.jar: nachos/machine/*.java
