@@ -14,7 +14,7 @@ cd doc
 
 # Uncomment the following if documentation is available for the
 # "machine" package.
-#MACHINE=-link machine
+#MACHINE="-link machine"
 
 # Uncomment the following if documentation is not available for the
 # "machine" package.
