@@ -391,7 +391,7 @@ class Nachos implements Runnable {
   /* Write "size" bytes from "buffer" to the open file. */
   public static int Write(byte buffer[], int size, int id) {
     if (id == ConsoleOutput)
-      System.err.println(new String(buffer, 0));
+      System.err.println(new String(buffer));
     return 0;
   }
 
