@@ -48,9 +48,9 @@ public class ConsoleTest {
     readAvail = new Semaphore("read avail", 0);
     writeDone = new Semaphore("write done", 0);
     console = Console.streamConsole(in, out, new ConsHandler(readAvail), 
-				    new ConsHandler(writeDone));
+    				    new ConsHandler(writeDone));
     //console = Console.guiConsole(new ConsHandler(readAvail),
-    //			 new ConsHandler(writeDone));
+    //				 new ConsHandler(writeDone));
 
     while (true) {
       readAvail.P();		// wait for character to arrive
@@ -113,7 +113,7 @@ public class ConsoleTest {
        * requested the I/O.
        */
       public void serviceDevice() {
-	  //Debug.println('c', "ConsoleTest: 10 " + semaphore.name);
+	  //Debug.println('c', "ConsoleTest: " + semaphore.name);
 	  semaphore.V();
       }
   }
