@@ -146,7 +146,7 @@ public class Syscall {
    *
    * @param buffer Location of the data to be written.
    * @param size The number of bytes to write.
-   * @param id The OpenFileId of the file from which to read the data.
+   * @param id The OpenFileId of the file to which to write the data.
    */
   public static void write(byte buffer[], int size, int id) {
     if (id == ConsoleOutput)
