@@ -54,9 +54,8 @@ class Condition {
     Debug.printf('s', "Thread %s waiting on condition variable %s\n",
 		 NachosThread.currentThread().getName(), name);
 
-    conditionLock.release();
-
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);// disable interrupts
+    conditionLock.release();
     waitingThreads.append(NachosThread.currentThread());
     NachosThread.thisThread().sleep();
     Interrupt.setLevel(oldLevel);	// re-enable interrupts
