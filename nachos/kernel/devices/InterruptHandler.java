@@ -25,7 +25,7 @@ public abstract class InterruptHandler
   private static boolean inHandler;
 
   /** Should the CPU be rescheduled on return from the current handler? */
-  static boolean yieldOnReturn;
+  private static boolean yieldOnReturn;
 
   static {
       inHandler = false;
