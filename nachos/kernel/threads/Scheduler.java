@@ -1,9 +1,7 @@
 // Scheduler.java
 //
-//	fork -- create a thread to run a procedure concurrently
-//		with the caller (this is done in two steps -- first
-//		allocate the Thread object, then call Fork on it)
-//	finish -- called when the forked procedure finishes, to clean up
+//      readyToRun -- place a thread on the ready list and make it runnable.
+//	finish -- called when a thread finishes, to clean up
 //	yield -- relinquish control over the CPU to another ready thread
 //	sleep -- relinquish control over the CPU, but thread is now blocked.
 //		In other words, it will not run again, until explicitly 
@@ -77,8 +75,10 @@ public class Scheduler {
 
     Debug.println('t', "Scheduling first Nachos thread");
 
+    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     nextThread = findNextToRun();
     if (nextThread == null) {
+      Interrupt.setLevel(oldLevel);
       Debug.print('+', "Scheduler.start(): no NachosThread ready!");
       return;
     }
@@ -87,22 +87,24 @@ public class Scheduler {
 
     nextThread.switchTo(nextThread);
     currentThread = nextThread;
+    Interrupt.setLevel(oldLevel);
 
     // nextThread is now running
   }
 
   /**
-   * Mark a thread as ready, but not running, and
-   * put it on the ready list, for later scheduling onto the CPU.
+   * Mark a thread as ready, but not running, and put it on the ready list
+   * for later scheduling onto the CPU.
    *
    * @param thread The thread to be put on the ready list.
    */
   public static void readyToRun(NachosThread thread) {
     Debug.print('t', "Putting thread on ready list: " + thread.getName() + 
 		"\n");
-
+    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     thread.setStatus(NachosThread.READY);
     readyList.append(thread);
+    Interrupt.setLevel(oldLevel);
   }
   
   /**
@@ -155,25 +157,6 @@ public class Scheduler {
 	threadToBeDestroyed = null;
     }
   }
-
-  /**
-   *
-   * Start a thread executing runObj.run().
-   *
-   * @param t The thread to start.
-   * @param runObj The object whose run() method the thread is to run.
-   */
-  public static void fork(NachosThread t, Runnable runObj) {
-    Debug.print('t', "Forking thread: " + t.getName() + "\n");
-    Debug.ASSERT((t.getStatus() == NachosThread.JUST_CREATED), 
-		 "Attempt to fork a thread that's already been forked");
-    t.start(runObj);
-
-    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
-    readyToRun(t);		// ReadyToRun assumes that interrupts 
-				// are disabled!
-    Interrupt.setLevel(oldLevel);
-  }    
 
   /**
    * Relinquish the CPU if any other thread is ready to run.

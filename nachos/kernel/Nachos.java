@@ -186,8 +186,8 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
      * All we can do is to create the first NachosThread and take it
      * from there.
      */
-    NachosThread t = new NachosThread("First Thread");
-    Scheduler.fork(t, new Nachos());
+    NachosThread t = new NachosThread("FirstThread", new Nachos());
+    Scheduler.readyToRun(t);
     /*
      * Our final responsibility is to start the Nachos scheduler.
      * This will cause the thread we just created to begin running at

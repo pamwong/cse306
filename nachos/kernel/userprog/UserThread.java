@@ -37,11 +37,13 @@ public class UserThread extends NachosThread {
    * Initialize a new user thread.
    *
    * @param name  An arbitrary name, useful for debugging.
+   * @param runObj Execution of the thread will begin with the run()
+   * method of this object.
    * @param addrSpace  The context to be installed when this thread
    * is executing in user mode.
    */
-  public UserThread(String name, AddrSpace addrSpace) {
-      super(name);
+  public UserThread(String name, Runnable runObj, AddrSpace addrSpace) {
+      super(name, runObj);
       space = addrSpace;
   }
 

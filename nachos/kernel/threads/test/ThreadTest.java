@@ -52,7 +52,8 @@ public class ThreadTest implements Runnable {
    */
   public ThreadTest(int w) {
     which = w;
-    Scheduler.fork(new NachosThread("Test thread " + w), this);
+    NachosThread t = new NachosThread("Test thread " + w, this);
+    Scheduler.readyToRun(t);
   }
 
   /**

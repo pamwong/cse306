@@ -40,8 +40,8 @@ public class ProgTest implements Runnable {
 
     execName = filename;
     AddrSpace space = new AddrSpace();
-    UserThread t = new UserThread("ProgTest thread", space);
-    Scheduler.fork(t, this);
+    UserThread t = new UserThread("ProgTest thread", this, space);
+    Scheduler.readyToRun(t);
   }
 
   /**

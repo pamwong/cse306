@@ -92,8 +92,7 @@ public class Semaphore {
     NachosThread thread;
     /*
      *	As with P(), this operation must be atomic, so we need to disable
-     *	interrupts.  Scheduler.readyToRun() assumes that threads
-     *	are disabled when it is called.
+     *	interrupts.
      */
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
 
