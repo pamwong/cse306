@@ -40,10 +40,10 @@ public class DiskDriver {
   private Disk disk;
 
   /** To synchronize requesting thread with the interrupt handler. */
-  Semaphore semaphore;
+  private Semaphore semaphore;
 
   /** Only one read/write request can be sent to the disk at a time. */
-  Lock lock;
+  private Lock lock;
 
   /**
    * Initialize the synchronous interface to the physical disk, in turn
@@ -91,7 +91,7 @@ public class DiskDriver {
   /**
    * DiskDriver interrupt handler class.
    */
-  class DiskIntHandler extends InterruptHandler {
+  private class DiskIntHandler extends InterruptHandler {
       /**
        * When the disk interrupts, just wake up the thread that issued
        * the request that just finished.

@@ -118,7 +118,7 @@ public class ConsoleTest {
   /**
    * Console interrupt handler class.
    */
-  static class ConsHandler extends InterruptHandler {
+  private static class ConsHandler extends InterruptHandler {
       /** Semaphore used to awaken requesting thread. */
       private Semaphore semaphore;
 
