@@ -111,7 +111,11 @@ main (int argc, char **argv)
     }
 
 /* open the NOFF file (output) */
+#if defined (_WIN32) || defined (__CYGWIN__)
+    fdOut = open(argv[2], O_WRONLY|O_CREAT|O_TRUNC|O_BINARY , 0666);
+#else
     fdOut = open(argv[2], O_WRONLY|O_CREAT|O_TRUNC , 0666);
+#endif
     if (fdIn == -1) {
 	perror(argv[2]);
 	exit(1);
