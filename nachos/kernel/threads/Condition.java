@@ -49,7 +49,7 @@ import nachos.machine.Interrupt;
 public class Condition {
 
   /** Printable name useful for debugging. */
-  private String name;
+  public final String name;
 
   /** The lock associated with this condition. */
   private Lock conditionLock;

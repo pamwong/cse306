@@ -28,7 +28,7 @@ import nachos.Debug;
 public class Lock {
 
   /** Printable name useful for debugging. */
-  private String name;
+  public final String name;
 
   /** semaphore used for implementation of lock. */
   private Semaphore sem;
@@ -88,16 +88,6 @@ public class Lock {
   public boolean isHeldByCurrentThread()
   {
     return (owner == Scheduler.currentThread());
-  }
-
-  /**
-   * Obtain the name of this lock.
-   *
-   * @return the name of this lock.
-   */
-  public String getName()
-  {
-    return name;
   }
 
 }

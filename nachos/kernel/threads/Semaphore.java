@@ -42,7 +42,7 @@ import nachos.machine.NachosThread;
 public class Semaphore {
 
   /** Printable name useful for debugging. */
-  public String name;
+  public final String name;
 
   /** The value of the semaphore, always >= 0. */
   private int value;
