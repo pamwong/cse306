@@ -92,8 +92,8 @@ public class Scheduler {
   }
 
   /**
-   * Mark a thread as ready, but not running.
-   * Put it on the ready list, for later scheduling onto the CPU.
+   * Mark a thread as ready, but not running, and
+   * put it on the ready list, for later scheduling onto the CPU.
    *
    * @param thread The thread to be put on the ready list.
    */
