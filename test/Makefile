@@ -33,10 +33,10 @@ SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S
 
 all:
 
-$(NACHOSDIR)/bin/coff2noff:
-	@echo "*** Missing $(NACHOSDIR)/bin/coff2noff, making that first"
-	cd ../bin; make coff2noff
-	@echo "*** Returning to make in test directory"
+#$(NACHOSDIR)/bin/coff2noff:
+#	@echo "*** Missing $(NACHOSDIR)/bin/coff2noff, making that first"
+#	cd ../bin; make coff2noff
+#	@echo "*** Returning to make in test directory"
 
 start.o: start.s $(INCDIR)/syscall.h
 	$(CPP) $(CPPFLAGS) start.s > strt.s
@@ -50,7 +50,7 @@ halt.o: halt.c
 halt: halt.o start.o
 	$(LD) $(LDFLAGS) start.o halt.o -o halt.coff
 	rm halt.o
-	$(NACHOSDIR)/bin/coff2noff halt.coff halt
+	$(GCCDIR)/coff2noff halt.coff halt
 	rm halt.coff
 
 # If you are using gmake, the following rules should enable you to
@@ -65,5 +65,5 @@ halt: halt.o start.o
 %: %.o start.o
 	$(LD) $(LDFLAGS) start.o $< -o $*.coff
 	rm $*.o
-	$(NACHOSDIR)/bin/coff2noff $*.coff $@
+	$(GCCDIR)/coff2noff $*.coff $@
 	rm $*.coff
