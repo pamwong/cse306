@@ -30,9 +30,15 @@ public class Coff2Noff {
 	    } else if(s.name.equals(".text")) {
 		noff.setCode(s.pAddr, s.data);
 	    } else if(s.name.equals(".rdata")) {
-		// The linker outputs .rdata right after .text.
-		// Since we assume .text is nonempty, so there is
-		// nothing to do here.
+		try {
+		    noff.appendToCode(s.pAddr, s.data);
+		} catch(NoffOutput.OutOfOrderSection x) {
+		    System.err.println
+			("Out-of-order .rdata section in code segment at "
+			 + "0x" + Integer.toHexString(s.pAddr));
+		    noffFile.delete();
+		    System.exit(1);
+		}
 	    } else if(s.name.equals(".data")) {
 		noff.setInitData(s.pAddr, s.data);
 	    } else if(s.name.equals(".bss") || s.name.equals(".sbss")) {

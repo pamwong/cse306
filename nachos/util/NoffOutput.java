@@ -31,6 +31,8 @@ class NoffOutput {
 	}
     }
 
+    public static class OutOfOrderSection extends Exception {};
+
     /*
      * Contents of the NOFF header.
      */
@@ -66,6 +68,43 @@ class NoffOutput {
     public void setUninitData(int virtualAddr, int size) {
 	uninitData.virtualAddr = virtualAddr;
 	uninitData.size = size;
+    }
+
+    public void appendToCode(int virtualAddr, byte[] contents)
+      throws OutOfOrderSection {
+	if(virtualAddr != code.virtualAddr + code.size)
+	    throw new OutOfOrderSection();
+	code.size += contents.length;
+	code.contents = appendContents(code.contents, contents);
+    }
+
+    public void appendToInitData(int virtualAddr, byte[] contents)
+      throws OutOfOrderSection {
+	if(virtualAddr != initData.virtualAddr + initData.size)
+	    throw new OutOfOrderSection();
+	initData.size += contents.length;
+	initData.contents = appendContents(initData.contents, contents);
+    }
+
+    public void appendToUninitData(int virtualAddr, int size)
+      throws OutOfOrderSection {
+	if(virtualAddr != uninitData.virtualAddr + uninitData.size)
+	    throw new OutOfOrderSection();
+	uninitData.size += size;
+    }
+
+    /*
+     * Append additional contents to an existing segment,
+     * without changing the starting virtual address.
+     */
+    private byte[] appendContents(byte[] oldContents, byte[] toAppend) {
+	int oCl = oldContents.length;
+	byte[] newContents = new byte[oCl + toAppend.length];
+	for(int i = 0; i < oCl; i++)
+	    newContents[i] = oldContents[i];
+	for(int i = 0; i < toAppend.length; i++)
+	    newContents[i+oCl] = toAppend[i];
+	return(newContents);
     }
 
     public void write() throws IOException {
