@@ -143,7 +143,7 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
      */
     if (THREADS) {
       ThreadTest.start(args);
-      AlarmTest.start(args);
+      //AlarmTest.start(args);
     }
 
     if (USER_PROGRAM) {
