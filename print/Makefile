@@ -9,8 +9,7 @@ README=README.stark README.druschel test/README
 
 MAKEFILES=Makefile test/Makefile bin/Makefile
 
-KERNEL=nachos/Debug.java\
-	nachos/Statistics.java\
+KERNEL=\
 	nachos/kernel/Nachos.java\
 	nachos/kernel/devices/DiskDriver.java\
 	nachos/kernel/devices/InterruptHandler.java\
@@ -40,6 +39,8 @@ KERNEL=nachos/Debug.java\
 	nachos/kernel/userprog/Syscall.java\
 	nachos/kernel/userprog/UserThread.java\
 	nachos/kernel/userprog/test/ProgTest.java\
+	nachos/Statistics.java\
+	nachos/Debug.java
 
 MACHINE=machine/Console.java\
 	machine/Disk.java\
@@ -50,14 +51,14 @@ MACHINE=machine/Console.java\
 	machine/Machine.java\
 	machine/NachosThread.java\
 	machine/PendingInterrupt.java\
+	machine/SegmentDescriptor.java\
 	machine/StreamConsole.java\
 	machine/Timer.java\
 	machine/TranslationEntry.java
 
-INCLUDE=include/copyright.h\
-	include/syscall.h
-
-TEST=test/halt.c\
+TEST=   include/copyright.h\
+	include/syscall.h\
+	test/halt.c\
 	test/matmult.c\
 	test/shell.c\
 	test/sort.c\
@@ -71,7 +72,7 @@ nachos.ps:
 	cd ..; \
 	a2ps -o - -b --margin=24 --pretty-print --print-anyway=1 \
 		${COPYRIGHT} ${README} ${MAKEFILES} \
-		${INCLUDE} ${KERNEL} ${TEST} > print/nachos.ps
+		${KERNEL} ${TEST} > print/nachos.ps
 
 clean:
 	rm -f *~ \#* *.ps

@@ -24,9 +24,9 @@ default: kernel
 # The Cygwin "make" seems to insist on the Java source files existing
 # even when machine.jar is present, so leave this commented out.
 #
-#$(MACHINE): nachos/machine/*.java
-#	${JC} nachos/machine/*.java
-#	jar cvf machine.jar nachos/machine/*.class
+$(MACHINE): nachos/machine/*.java
+	${JC} nachos/machine/*.java
+	jar cvf machine.jar nachos/machine/*.class
 
 javadoc:
 	makejavadoc
@@ -39,16 +39,11 @@ cleanbackup:
 
 KERNEL_CLASSES=\
 	nachos/kernel/Nachos.class \
-	nachos/kernel/userprog/test/ProgTest.class \
-	nachos/kernel/userprog/ExceptionHandler.class \
-	nachos/kernel/userprog/NoffHeader.class \
-	nachos/kernel/userprog/Syscall.class \
-	nachos/kernel/userprog/UserThread.class \
-	nachos/kernel/userprog/AddrSpace.class \
-	nachos/kernel/devices/test/ConsoleTest.class \
-	nachos/kernel/devices/InterruptHandler.class \
 	nachos/kernel/devices/DiskDriver.class \
-	nachos/kernel/filesys/test/FileSystemTest.class \
+	nachos/kernel/devices/InterruptHandler.class \
+	nachos/kernel/devices/test/ConsoleTest.class \
+	nachos/kernel/filesys/BitMap.class \
+	nachos/kernel/filesys/Directory.class \
 	nachos/kernel/filesys/DirectoryEntry.class \
 	nachos/kernel/filesys/FileHeader.class \
 	nachos/kernel/filesys/FileSystem.class \
@@ -57,16 +52,21 @@ KERNEL_CLASSES=\
 	nachos/kernel/filesys/OpenFile.class \
 	nachos/kernel/filesys/OpenFileReal.class \
 	nachos/kernel/filesys/OpenFileStub.class \
-	nachos/kernel/filesys/BitMap.class \
-	nachos/kernel/filesys/Directory.class \
-	nachos/kernel/threads/test/AlarmTest.class \
-	nachos/kernel/threads/test/ThreadTest.class \
+	nachos/kernel/filesys/test/FileSystemTest.class \
+	nachos/kernel/threads/Condition.class \
 	nachos/kernel/threads/List.class \
 	nachos/kernel/threads/Lock.class \
 	nachos/kernel/threads/Scheduler.class \
 	nachos/kernel/threads/Semaphore.class \
 	nachos/kernel/threads/SynchList.class \
-	nachos/kernel/threads/Condition.class \
+	nachos/kernel/threads/test/AlarmTest.class \
+	nachos/kernel/threads/test/ThreadTest.class \
+	nachos/kernel/userprog/AddrSpace.class \
+	nachos/kernel/userprog/ExceptionHandler.class \
+	nachos/kernel/userprog/NoffHeader.class \
+	nachos/kernel/userprog/Syscall.class \
+	nachos/kernel/userprog/UserThread.class \
+	nachos/kernel/userprog/test/ProgTest.class \
 	nachos/Statistics.class \
 	nachos/Debug.class
 
