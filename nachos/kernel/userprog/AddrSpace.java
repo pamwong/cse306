@@ -146,10 +146,12 @@ public class AddrSpace {
     // of branch delay possibility
     Machine.writeRegister(Machine.NextPCReg, 4);
 
-    // Set the stack register to the end of the segment,
-    // but subtract off a bit, to accomodate compiler convention that
+    // Set the stack register to the end of the segment.
+    // NOTE: Nachos traditionally subtracted 16 bytes here,
+    // but that turns out to be to accomodate compiler convention that
     // assumes space in the current frame to save four argument registers.
-    int sp = (int)(descriptor.size - 16);
+    // That code rightly belongs in start.s and has been moved there.
+    int sp = (int)(descriptor.size);
     Machine.writeRegister(Machine.StackReg, sp);
     Debug.printf('a', "Initializing stack register to 0x%x\n",
 		 new Integer(sp));

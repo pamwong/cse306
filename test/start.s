@@ -24,6 +24,7 @@
 	.globl __start
 	.ent	__start
 __start:
+	subu	$sp,$sp,16  /* GCC expects spill space for r4-r7 */
 	jal	main
 	move	$4,$0		
 	jal	Exit	 /* if we return from main, exit(0) */
