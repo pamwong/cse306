@@ -26,7 +26,7 @@ import nachos.kernel.filesys.OpenFile;
 public class ProgTest implements Runnable {
 
   /** The name of the program to execute. */
-  static String execName;
+  String execName;
 
   /**
    * Start the test by creating a new address space and user thread,
