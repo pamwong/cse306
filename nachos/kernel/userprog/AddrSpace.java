@@ -73,13 +73,11 @@ public class AddrSpace {
 	return(-1);
 
     // how big is address space?
-    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size 
-                       + UserStackSize;	// we need to increase the size
-					// to leave room for the stack
+    size = roundToPage(noffH.code.size)
+	     + roundToPage(noffH.initData.size + noffH.uninitData.size)
+	     + UserStackSize;	// we need to increase the size
+    				// to leave room for the stack
     int numPages = (int)(size / Machine.PageSize);
-    if (size % Machine.PageSize > 0) numPages++;
-
-    size = numPages * Machine.PageSize;
 
     Debug.ASSERT((numPages <= Machine.NumPhysPages),// check we're not trying
 		 "AddrSpace constructor: Not enough memory!");
@@ -178,5 +176,12 @@ public class AddrSpace {
    */
   public void restoreState() {
     Machine.setPageTable(pageTable);
+  }
+
+  /**
+   * Utility method for rounding up to a multiple of Machine.PageSize;
+   */
+  private int roundToPage(int size) {
+    return(Machine.PageSize * ((size+(Machine.PageSize-1))/Machine.PageSize));
   }
 }
