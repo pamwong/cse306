@@ -1,4 +1,4 @@
-JC = /usr/site/jdk-1.1.6/bin/javac -classpath .:../machine:../filesys:../userprog:../threads:../vm:/usr/site/jdk-1.1.6/lib/classes.zip
+JC = javac -classpath .:../machine:../filesys:../userprog:../threads:../vm
 
 all:
 	${JC} ../threads/Nachos.java
