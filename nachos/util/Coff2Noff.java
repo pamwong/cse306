@@ -22,7 +22,6 @@ public class Coff2Noff {
 	NoffOutput noff = new NoffOutput(noffFile);
 
 	CoffInput.Section[] sections = coff.getSections();
-	boolean haveData = false;
 	boolean haveBSS = false;
 	for(int i = 0; i < sections.length; i++) {
 	    CoffInput.Section s = sections[i];
@@ -30,15 +29,12 @@ public class Coff2Noff {
 		// do nothing!
 	    } else if(s.name.equals(".text")) {
 		noff.setCode(s.pAddr, s.data);
-	    } else if(s.name.equals(".data") || s.name.equals(".rdata")) {
-		if(haveData) {
-		    System.err.println("Can't handle both data and rdata");
-		    noffFile.delete();
-		    System.exit(1);
-		} else {
-		    haveData = true;
-		    noff.setInitData(s.pAddr, s.data);
-		}
+	    } else if(s.name.equals(".rdata")) {
+		// The linker outputs .rdata right after .text.
+		// Since we assume .text is nonempty, so there is
+		// nothing to do here.
+	    } else if(s.name.equals(".data")) {
+		noff.setInitData(s.pAddr, s.data);
 	    } else if(s.name.equals(".bss") || s.name.equals(".sbss")) {
 		if(haveBSS) {
 		    System.err.println("Can't handle both bss and sbss");
