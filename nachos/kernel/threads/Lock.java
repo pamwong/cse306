@@ -1,71 +1,100 @@
 // Lock.java
 //
-// The following class defines a "lock".  A lock can be BUSY or FREE.
-// There are only two operations allowed on a lock: 
-//
-//	Acquire -- wait until the lock is FREE, then set it to BUSY
-//
-//	Release -- set lock to be FREE, waking up a thread waiting
-//		in Acquire if necessary
-//
-// In addition, by convention, only the thread that acquired the lock
-// may release it.  As with semaphores, you can't read the lock value
-// (because the value might change immediately after you read it).  
-//
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
-class Lock {
-  private String name;				// for debugging
-  // plus some other stuff you'll need to define
+package nachos.kernel.threads;
 
-  private Semaphore sem;  // semaphore used for implementation of lock
-  private NachosThread owner;  // which thread currently holds this lock?
+import nachos.machine.NachosThread;
+import nachos.machine.Interrupt;
+import nachos.Debug;
 
+/**
+ * This class defines a "lock".  A lock can be BUSY or FREE.
+ * There are only two operations allowed on a lock: 
+ *
+ *	Acquire -- wait until the lock is FREE, then set it to BUSY.
+ *
+ *	Release -- set lock to be FREE, waking up a thread waiting
+ *		in Acquire if necessary.
+ *
+ * In addition, by convention, only the thread that acquired the lock
+ * may release it.  As with semaphores, you can't read the lock value
+ * (because the value might change immediately after you read it).  
+ */
+public class Lock {
+
+  /** Printable name useful for debugging. */
+  private String name;
+
+  /** semaphore used for implementation of lock. */
+  private Semaphore sem;
+
+  /** Which thread currently holds this lock? */
+  private NachosThread owner;
+
+  /**
+   * Initialize a lock.
+   *
+   *	@param debugName An arbitrary name, useful for debugging.
+   */
   public Lock(String debugName) {
     name = debugName;
     sem = new Semaphore("Semaphore for lock \"" + debugName + "\"", 1);
     owner = null;
   }
 
+  /**
+   * Wait until the lock is "free", then set the lock to "busy".
+   */
   public void acquire() {
 
     Debug.printf('s', "Acquiring lock %s for thread %s\n",
-		 name, NachosThread.thisThread().getName());
+		 name, Scheduler.currentThread().getName());
 
     sem.P();
-
-    owner = NachosThread.thisThread();
+    owner = Scheduler.currentThread();
 
     Debug.printf('s', "Acquired lock %s for thread %s\n",
-		 name, NachosThread.thisThread().getName());
-
+		 name, Scheduler.currentThread().getName());
   }
 
+  /**
+   * Release the lock that was previously acquired, waking up a
+   * waiting thread if necessary.
+   */
   public void release() {
 
-    Debug.ASSERT((NachosThread.thisThread() == owner),
+    Debug.ASSERT((Scheduler.currentThread() == owner),
 		 "A thread which doesn't own the lock tried to " +
 		 "release it!\n");
-
     Debug.printf('s', "Thread %s dropping lock %s\n",
-		 NachosThread.thisThread().getName(), name);
+		 Scheduler.currentThread().getName(), name);
+
     owner = null;
     sem.V();
-    Debug.printf('s', "Thread %s dropped lock %s\n",
-		 NachosThread.thisThread().getName(), name);
 
+    Debug.printf('s', "Thread %s dropped lock %s\n",
+		 Scheduler.currentThread().getName(), name);
   }
 
-  // a predicate which determines whether or not the lock is held by the
-  // current thread.  Used for sanity checks in condition variables.
+  /**
+   * A predicate that determines whether or not the lock is held by the
+   * current thread.  Used for sanity checks in condition variables.
+   */
   public boolean isHeldByCurrentThread()
   {
-    return (owner == NachosThread.thisThread());
+    return (owner == Scheduler.currentThread());
   }
 
+  /**
+   * Obtain the name of this lock.
+   *
+   * @return the name of this lock.
+   */
   public String getName()
   {
     return name;

@@ -5,17 +5,21 @@
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
 
-// The following class defines the statistics that are to be kept
-// about Nachos behavior -- how much time (ticks) elapsed, how
-// many user instructions executed, etc.
-//
-// The fields in this class are public to make it easier to update.
+package nachos;
 
-class Statistics {
+/**
+ * This class defines the statistics that are to be kept
+ * about Nachos behavior -- how much time (ticks) elapsed, how
+ * many user instructions executed, etc.
+ *
+ * The fields in this class are public to make it easier to update.
+ */
+public class Statistics {
 
   // Constants used to reflect the relative time an operation would
   // take in a real system.  A "tick" is a just a unit of time -- if you 
@@ -25,45 +29,69 @@ class Statistics {
   // in the kernel measured by the number of calls to enable interrupts,
   // these time constants are none too exact.
   
+  /** Time taken to execute each user-level instruction. */
   public static final int UserTick = 1;
-  // advance for each user-level instruction 
-  public static final int SystemTick =	10;
-  // advance each time interrupts are enabled
-  public static final int RotationTime = 500;
-  // time disk takes to rotate one sector
-  public static final int SeekTime = 500;
-  // time disk takes to seek past one track
-  public static final int ConsoleTime = 100;
-  // time to read or write one character
-  public static final int NetworkTime = 100;
-  // time to send or receive one packet
-  public static final int TimerTicks = 100;
-  // (average) time between timer interrupts
 
+  /** Time advance each time interrupts are enabled. */
+  public static final int SystemTick =	10;
+
+  /** Time the disk takes to rotate one sector. */
+  public static final int RotationTime = 500;
+
+  /** Time disk takes to seek past one track. */
+  public static final int SeekTime = 500;
+
+  /** Time to read or write one character to the console. */
+  public static final int ConsoleTime = 100;
+
+  /** Time to send or receive one packet on the network. */
+  public static final int NetworkTime = 100;
+
+  /** (Average) time between timer interrupts. */
+  public static final int TimerTicks = 100;
 
   // instance variables
 
-  public int totalTicks;        // Total time running Nachos
-  public int idleTicks;        	// Time spent idle (no threads to run)
-  public int systemTicks; 	// Time spent executing system code
-  public int userTicks;         // Time spent executing user code
-				// (this is also equal to # of
-				// user instructions executed)
+  /** Total time running Nachos. */
+  public int totalTicks;
 
-  public int numDiskReads;		// number of disk read requests
-  public int numDiskWrites;		// number of disk write requests
-  public int numConsoleCharsRead;  // number of chars read from the keyboard
-  public int numConsoleCharsWritten;// number of chars written to the display
-  public int numPageFaults;	// number of virtual memory page faults
-  public int numPacketsSent;	// number of packets sent over the network
-  public int numPacketsRecvd;  // number of packets received over the network
+  /** Time spent idle (no threads to run). */
+  public int idleTicks;
 
+  /** Time spent executing system code. */
+  public int systemTicks;
 
-  //----------------------------------------------------------------------
-  // statistics
-  // 	Initialize performance metrics to zero, at system startup.
-  //----------------------------------------------------------------------
+  /**
+   * Time spent executing user code
+   * (this is also equal to # of
+   * user instructions executed).
+   */
+  public int userTicks;
 
+  /** Number of disk read requests. */
+  public int numDiskReads;
+
+  /** Number of disk write requests. */
+  public int numDiskWrites;
+
+  /** Number of chars read from the keyboard. */
+  public int numConsoleCharsRead;
+
+  /** Number of chars written to the display. */
+  public int numConsoleCharsWritten;
+
+  /** Number of virtual memory page faults. */
+  public int numPageFaults;
+
+  /** Number of packets sent over the network. */
+  public int numPacketsSent;
+
+  /** Number of packets received over the network. */
+  public int numPacketsRecvd;
+
+  /**
+   * Initialize performance metrics to zero, at system startup.
+   */
   public Statistics() {
     totalTicks = idleTicks = systemTicks = userTicks = 0;
     numDiskReads = numDiskWrites = 0;
@@ -71,12 +99,10 @@ class Statistics {
     numPageFaults = numPacketsSent = numPacketsRecvd = 0;
   }
 
-  //----------------------------------------------------------------------
-  // print
-  // 	Print performance metrics, when we've finished everything
-  //	at system shutdown.
-  //----------------------------------------------------------------------
-
+  /**
+   * 	Print performance metrics, when we've finished everything
+   *	at system shutdown.
+   */
   public void print() {
 
     Debug.printf('+', "Ticks: total %d, idle %d, system %d, user %d\n", 

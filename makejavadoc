@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Build "external" documentation for the machine package.
+javadoc -d doc.machine \
+	-doctitle "Nachos-USB Machine Documentation" \
+	-windowtitle "Nachos-USB Machine Documentation" \
+	-sourcepath "." -classpath "." \
+	nachos.machine
+
+# Build "internal" documentation for everything but the machine package.
+javadoc -d doc.kernel \
+	-doctitle "Nachos-USB Kernel Documentation" \
+	-windowtitle "Nachos-USB Kernel Documentation" \
+	-sourcepath "." -classpath "." \
+	-private \
+        nachos \
+	nachos.kernel \
+	nachos.kernel.threads \
+	nachos.kernel.threads.test \
+	nachos.kernel.userprog \
+	nachos.kernel.userprog.test \
+	nachos.kernel.devices \
+	nachos.kernel.devices.test \
+	nachos.kernel.filesys \
+	nachos.kernel.filesys.test

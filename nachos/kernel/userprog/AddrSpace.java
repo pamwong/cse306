@@ -13,45 +13,70 @@
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
-import java.io.*;
+package nachos.kernel.userprog;
 
-class AddrSpace {
+import nachos.Debug;
+import nachos.machine.TranslationEntry;
+import nachos.machine.Machine;
+import nachos.kernel.filesys.OpenFile;
 
-  static final int UserStackSize = 1024; // increase this as necessary!
+/**
+ * This class manages "address spaces", which are the contexts in which
+ * user programs execute.  For now, an address space contains a "page table",
+ * which describes the the virtual-to-physical address mapping that is to
+ * be used when the user program is executing.  As you implement more of
+ * Nachos, it will probably be necessary to add other fields to this class
+ * to keep track of things like open files, network connections, etc.,
+ * in use by a user program.
+ *
+ * NOTE: Most of what is in currently this class assumes that just one user
+ * program at a time will be executing.  You will have to rewrite this
+ * code so that it is suitable for multiprogramming.
+ */
+public class AddrSpace {
 
-  TranslationEntry pageTable[];
-  int numPages;
+  /** Page table that describes a virtual-to-physical address mapping. */
+  private TranslationEntry pageTable[];
 
-  //----------------------------------------------------------------------
-  // 	Create an address space to run a user program.
-  //	Load the program from a file "executable", and set everything
-  //	up so that we can start executing user instructions.
-  //
-  //	Assumes that the object code file is in NOFF format.
-  //
-  //	First, set up the translation from program memory to physical 
-  //	memory.  For now, this is really simple (1:1), since we are
-  //	only uniprogramming, and we have a single unsegmented page table
-  //
-  //	"executable" is the file containing the object code to 
-  //    load into memory
-  //----------------------------------------------------------------------
+  /** Default size of the user stack area -- increase this as necessary! */
+  private static final int UserStackSize = 1024;
 
-  public AddrSpace(RandomAccessFile executable) throws IOException {
+  /**
+   * Create a new address space.
+   */
+  public AddrSpace() { }
 
+  /**
+   * Load the program from a file "executable", and set everything
+   * up so that we can start executing user instructions.
+   *
+   * Assumes that the object code file is in NOFF format.
+   *
+   * First, set up the translation from program memory to physical 
+   * memory.  For now, this is really simple (1:1), since we are
+   * only uniprogramming, and we have a single unsegmented page table
+   *
+   * @param executable The file containing the object code to 
+   * 	load into memory
+   * @return -1 if an error occurs while reading the object file,
+   *    otherwise 0.
+   */
+  public int exec(OpenFile executable) {
     NoffHeader noffH;
     long size;
     
-    noffH = new NoffHeader(executable);
+    if((noffH = NoffHeader.readHeader(executable)) == null)
+	return(-1);
 
     // how big is address space?
     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size 
                        + UserStackSize;	// we need to increase the size
 					// to leave room for the stack
-    numPages = (int)(size / Machine.PageSize);
+    int numPages = (int)(size / Machine.PageSize);
     if (size % Machine.PageSize > 0) numPages++;
 
     size = numPages * Machine.PageSize;
@@ -75,13 +100,14 @@ class AddrSpace {
       pageTable[i].use = false;
       pageTable[i].dirty = false;
       pageTable[i].readOnly = false;  // if the code segment was entirely on 
-					// a separate page, we could set its 
-					// pages to be read-only
+				      // a separate page, we could set its 
+				      // pages to be read-only
     }
     
-    // zero out the entire address space, to zero the unitialized data 
-    // segment and the stack segment
-    // ????? bzero(machine->mainMemory, size);
+    // Zero out the entire address space, to zero the unitialized data 
+    // segment and the stack segment.
+    for(int i = 0; i < size; i++)
+	Machine.mainMemory[i] = 0;
 
     // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
@@ -103,21 +129,18 @@ class AddrSpace {
       executable.read(Machine.mainMemory, (int)noffH.initData.virtualAddr, 
 		      (int)noffH.initData.size);
     }
-    
+
+    return(0);
   }
 
-
-  //----------------------------------------------------------------------
-  // InitRegisters
-  // 	Set the initial values for the user-level register set.
-  //
-  // 	We write these directly into the "machine" registers, so
-  //	that we can immediately jump to user code.  Note that these
-  //	will be saved/restored into the currentThread->userRegisters
-  //	when this thread is context switched out.
-  //----------------------------------------------------------------------
-
-  void initRegisters() {
+  /**
+   * Initialize the user-level register set to values appropriate for
+   * starting execution of a user program loaded in this address space.
+   *
+   * We write these directly into the "machine" registers, so
+   * that we can immediately jump to user code.
+   */
+  public void initRegisters() {
     int i;
     
     for (i = 0; i < Machine.NumTotalRegs; i++)
@@ -130,36 +153,30 @@ class AddrSpace {
     // of branch delay possibility
     Machine.writeRegister(Machine.NextPCReg, 4);
 
-   // Set the stack register to the end of the address space, where we
-   // allocated the stack; but subtract off a bit, to make sure we don't
-   // accidentally reference off the end!
-    Machine.writeRegister(Machine.StackReg, 
-			  numPages * Machine.PageSize - 16);
-    Debug.println('a', "Initializing stack register to " +
-		(numPages * Machine.PageSize - 16));
+    // Set the stack register to the end of the address space, where we
+    // allocated the stack; but subtract off a bit, to accomodate
+    // compiler convention that assumes space in the current frame to save
+    // four argument registers.
+    int sp = pageTable.length * Machine.PageSize - 16;
+    Machine.writeRegister(Machine.StackReg, sp);
+    Debug.println('a', "Initializing stack register to " + sp);
   }
 
-  //----------------------------------------------------------------------
-  // SaveState
-  // 	On a context switch, save any machine state, specific
-  //	to this address space, that needs saving.
-  //
-  //	For now, nothing!
-  //----------------------------------------------------------------------
+  /**
+   * On a context switch, save any machine state, specific
+   * to this address space, that needs saving.
+   *
+   * For now, nothing!
+   */
+  public void saveState() {}
 
-  void saveState() {}
-
-  //----------------------------------------------------------------------
-  // RestoreState
-  // 	On a context switch, restore the machine state so that
-  //	this address space can run.
-  //
-  //      For now, tell the machine where to find the page table.
-  //----------------------------------------------------------------------
-
-  void restoreState() {
-    Machine.pageTable = pageTable;
-    Machine.pageTableSize = numPages;
+  /**
+   * On a context switch, restore any machine state specific
+   * to this address space.
+   *
+   * For now, just tell the machine where to find the page table.
+   */
+  public void restoreState() {
+    Machine.setPageTable(pageTable);
   }
-
 }

@@ -15,87 +15,93 @@
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
+package nachos.kernel.threads;
 
+import nachos.machine.Interrupt;
+import nachos.machine.NachosThread;
 
-// The following class defines a "semaphore" whose value is a non-negative
-// integer.  The semaphore has only two operations P() and V():
-//
-//	P() -- waits until value > 0, then decrement
-//
-//	V() -- increment, waking up a thread waiting in P() if necessary
-// 
-// Note that the interface does *not* allow a thread to read the value of 
-// the semaphore directly -- even if you did read the value, the
-// only thing you would know is what the value used to be.  You don't
-// know what the value is now, because by the time you get the value
-// into a register, a context switch might have occurred,
-// and some other thread might have called P or V, so the true value might
-// now be different.
+/** This class defines a "semaphore" whose value is a non-negative
+ * integer.  The semaphore has only two operations, P() and V().
+ *
+ *	P() -- waits until value > 0, then decrement.
+ *
+ *	V() -- increment, waking up a thread waiting in P() if necessary.
+ * 
+ * Note that the interface does *not* allow a thread to read the value of 
+ * the semaphore directly -- even if you did read the value, the
+ * only thing you would know is what the value used to be.  You don't
+ * know what the value is now, because by the time you get the value
+ * into a register, a context switch might have occurred,
+ * and some other thread might have called P or V, so the true value might
+ * now be different.
+ */
+public class Semaphore {
 
-class Semaphore {
+  /** Printable name useful for debugging. */
+  public String name;
 
-  public String name;        // useful for debugging
-  private int value;          // semaphore value, always >= 0
-  private List queue;      // threads waiting in P() for the value to be > 0
+  /** The value of the semaphore, always >= 0. */
+  private int value;
 
+  /** Threads waiting in P() for the value to be > 0. */
+  private List queue;
 
-  //----------------------------------------------------------------------
-  // Semaphore
-  // 	Initialize a semaphore, so that it can be used for synchronization.
-  //
-  //	"debugName" is an arbitrary name, useful for debugging.
-  //	"initialValue" is the initial value of the semaphore.
-  //----------------------------------------------------------------------
-
+  /**
+   * 	Initialize a semaphore, so that it can be used for synchronization.
+   *
+   *	@param debugName An arbitrary name, useful for debugging.
+   *	@param initialValue The initial value of the semaphore.
+   */
   public Semaphore(String debugName, int initialValue) {
     name = debugName;
     value = initialValue;
     queue = new List();
   }
 
-
-  //----------------------------------------------------------------------
-  // P
-  // 	Wait until semaphore value > 0, then decrement.  Checking the
-  //	value and decrementing must be done atomically, so we
-  //	need to disable interrupts before checking the value.
-  //
-  //	Note that Thread::Sleep assumes that interrupts are disabled
-  //	when it is called.
-  //----------------------------------------------------------------------
-
+  /**
+   * 	Wait until semaphore value > 0, then decrement.
+   */
   public void P() {
-    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);// disable interrupts
+    /*
+     * Checking the value and decrementing must be done atomically,
+     * so we need to disable interrupts before checking the value.
+     *
+     * Note that Scheduler.Sleep() assumes that interrupts are disabled
+     * when it is called.
+     */
+    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
+    						// disable interrupts
     
     while (value == 0) { 			// semaphore not available
-	queue.append(NachosThread.thisThread());  // so go to sleep
-	NachosThread.thisThread().sleep();
+	queue.append(Scheduler.currentThread());// so go to sleep
+	Scheduler.sleep();
     } 
     value--; 					// semaphore available, 
 						// consume its value
-    
-    Interrupt.setLevel(oldLevel);	// re-enable interrupts
+    Interrupt.setLevel(oldLevel);
   }
 
-  //----------------------------------------------------------------------
-  // V
-  // 	Increment semaphore value, waking up a waiter if necessary.
-  //	As with P(), this operation must be atomic, so we need to disable
-  //	interrupts.  Scheduler.readyToRun() assumes that threads
-  //	are disabled when it is called.
-  //----------------------------------------------------------------------
-
+  /**
+   * 	Increment semaphore value, waking up a waiter if necessary.
+   */
   public void V() {
     NachosThread thread;
+    /*
+     *	As with P(), this operation must be atomic, so we need to disable
+     *	interrupts.  Scheduler.readyToRun() assumes that threads
+     *	are disabled when it is called.
+     */
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
 
     thread = (NachosThread)queue.remove();
     if (thread != null)	   // make thread ready, consuming the V immediately
 	Scheduler.readyToRun(thread);
     value++;
+
     Interrupt.setLevel(oldLevel);
   }
 

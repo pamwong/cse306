@@ -6,58 +6,151 @@
  *
  * Copyright (c) 1992-1993 The Regents of the University of California.
  * Copyright (c) 1998 Rice University.
+ * Copyright (c) 2003 State University of New York at Stony Brook.
  * All rights reserved.  See the COPYRIGHT file for copyright notice and
  * limitation of liability and disclaimer of warranty provisions.
  */
-import java.io.*;
 
+package nachos.kernel.userprog;
 
-class NoffSegment {
-  long virtualAddr;	        /* location of segment in virt addr space */
-  long inFileAddr;	        /* location of segment in this file */
-  long size;			/* size of segment */
+import nachos.Debug;
+import nachos.kernel.filesys.OpenFile;
 
-  public NoffSegment(RandomAccessFile f) throws IOException {
-    virtualAddr = convertWord(f);
-    inFileAddr = convertWord(f);
-    size = convertWord(f);
-  }
+/**
+ * A NoffHeader object is the kernel representation of the header
+ * portion of a NOFF executable file.  It contains information about the
+ * three segments (code, initialized data, uninitialized) data in the
+ * file, which is needed for initializing a user address space.
+ */
+class NoffHeader {
+  /**
+   * Magic number found at the beginning of a NOFF file.
+   * It permits the kernel to immediately reject files that are definitely
+   * not executable.
+   */
+  static final long noffMagic = 0xbadfad;
 
-  static int convertByte(byte raw) {
+  /** Information about the executable code segment. */
+  NoffSegment code;
+
+  /** Information about the initialized data segment. */
+  NoffSegment initData;
+
+  /**
+   * Information about the "uninitialized" data segment, which
+   * must be zeroed before use.
+   */
+  NoffSegment uninitData;
+  
+  /**
+   * Private constructor, to force use of readHeader() to initialize
+   * a NoffHeader.
+   */
+  private NoffHeader() { }
+
+  /**  
+   * Take bytes read from the file and interpret them as unsigned
+   * rather than signed values.
+   *
+   * @param raw  A raw byte read from the file.
+   * @return  The value of the byte when it is interpreted as an unsigned
+   * integer quantity.
+   */
+  private static int convertByte(byte raw) {
     if (raw < 0) return 256 + raw;
     else return raw;
   }
 
-  static long convertWord(RandomAccessFile f) throws IOException {
-    byte raw[] = new byte[4];
-    f.read(raw);
+  /**  
+   * Take four bytes read from the file and assemble them into an
+   * unsigned integer.
+   *
+   * @param raw  The four bytes read from the file.
+   * @return  The value of the four bytes when interpreted as an unsigned
+   * integer.
+   */
+  private static long convertWord(byte raw[]) {
     return convertByte(raw[0]) |
       (convertByte(raw[1]) << 8) | 
       (convertByte(raw[2]) << 16) |
       (convertByte(raw[3]) << 24);
   }
 
-}
-
-class NoffHeader {
-  static final long noffMagic = 0xbadfad;
-
-  NoffSegment code;		/* executable code segment */ 
-  NoffSegment initData;	        /* initialized data segment */
-  NoffSegment uninitData;	/* uninitialized data segment --
-				 * should be zero'ed before use 
-				 */
-  
-  // create a NoffHeader object by reading its values from a file
-  public NoffHeader(RandomAccessFile f) throws IOException {
-
-    if (NoffSegment.convertWord(f) != noffMagic) {
-      Debug.println('a', "NoffHeader: Bad magic value");
-      throw new IOException("bad magic value");
-    }
-    code = new NoffSegment(f);
-    initData = new NoffSegment(f);
-    uninitData = new NoffSegment(f);
+  /**
+   * Read a word from a file and check that it matches noffMagic.
+   *
+   * @param f The file to read.
+   * @return true if the word read matches noffMagic, false if
+   * it does not or a word could not be read from the file.
+   */
+  private static boolean checkMagic(OpenFile f) {
+      byte[] raw = new byte[4];
+      if(f.read(raw, 0, 4) != 4)
+	  return(false);
+      if(convertWord(raw) != noffMagic)
+	  return(false);
+      return(true);
   }
 
+  /**
+   * Initialize a NoffHeader object by reading its values from a file.
+   */
+  static NoffHeader readHeader(OpenFile f) {
+    NoffHeader hdr = new NoffHeader();
+    if (!checkMagic(f)) {
+      Debug.println('a', "NoffHeader: Bad magic value");
+      return(null);
+    }
+    hdr.code = NoffSegment.readSegment(f);
+    hdr.initData = NoffSegment.readSegment(f);
+    hdr.uninitData = NoffSegment.readSegment(f);
+    if(hdr.code == null || hdr.initData == null || hdr.uninitData == null)
+	return(null);
+    return(hdr);
+  }
+
+  /**
+   * A NoffSegment object contains information about one segment of a
+   * NOFF executable file.
+   */
+  static class NoffSegment {
+      /** The location of segment in user virtual address space. */
+      long virtualAddr;
+
+      /** The location of the segment in the NOFF file. */
+      long inFileAddr;
+
+      /** The size of the segment in bytes. */
+      long size;
+
+      /**
+       * Private constructor, to force use of readSegment() to initialize
+       * a NoffSegment.
+       */
+      private NoffSegment() { }
+
+      /**
+       * Initialize a NoffSegment with data from a file.
+       *
+       * @param f The file from which to read the data.
+       */
+      static NoffSegment readSegment(OpenFile f) {
+	  NoffSegment seg = new NoffSegment();
+	  byte[] raw = new byte[4];
+
+	  if(f.read(raw, 0, 4) != 4)
+	      return(null);
+	  seg.virtualAddr = convertWord(raw);
+
+	  if(f.read(raw, 0, 4) != 4)
+	      return(null);
+	  seg.inFileAddr = convertWord(raw);
+
+	  if(f.read(raw, 0, 4) != 4)
+	      return(null);
+	  seg.size = convertWord(raw);
+
+	  return(seg);
+      }
+  }
 }

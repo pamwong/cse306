@@ -1,4 +1,4 @@
-// SynchDisk.java
+// DiskDriver.java
 //	Class for synchronous access of the disk.  The physical disk 
 //	is an asynchronous device (disk requests return immediately, and
 //	an interrupt happens later on).  This is a layer on top of
@@ -12,58 +12,60 @@
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and 
 // limitation of liability and disclaimer of warranty provisions.
 
-// The following class defines a "synchronous" disk abstraction.
-// As with other I/O devices, the raw physical disk is an asynchronous device --
-// requests to read or write portions of the disk return immediately,
-// and an interrupt occurs later to signal that the operation completed.
-// (Also, the physical characteristics of the disk device assume that
-// only one operation can be requested at a time).
-//
-// This class provides the abstraction that for any individual thread
-// making a request, it waits around until the operation finishes before
-// returning.
+package nachos.kernel.devices;
 
+import nachos.machine.Disk;
+import nachos.kernel.threads.Semaphore;
+import nachos.kernel.threads.Lock;
+import nachos.kernel.devices.InterruptHandler;
 
-class SynchDisk {
-  
-  Disk disk;	  		// Raw disk device
-  Semaphore semaphore; 		// To synchronize requesting thread 
-				// with the interrupt handler
-  Lock lock;	  		// Only one read/write request
-                                // can be sent to the disk at a time
-  SynchDiskIntHandler handler;  // internal handler
+/**
+ * This class defines a "synchronous" disk abstraction.
+ * As with other I/O devices, the raw physical disk is an asynchronous
+ * device -- requests to read or write portions of the disk return immediately,
+ * and an interrupt occurs later to signal that the operation completed.
+ * (Also, the physical characteristics of the disk device assume that
+ * only one operation can be requested at a time).
+ *
+ * This class provides the abstraction that for any individual thread
+ * making a request, it waits around until the operation finishes before
+ * returning.
+ */
+public class DiskDriver {
+  /** Raw disk device. */
+  private Disk disk;
 
-  //----------------------------------------------------------------------
-  // SynchDisk
-  // 	Initialize the synchronous interface to the physical disk, in turn
-  //	initializing the physical disk.
-  //
-  //	"name" -- UNIX file name to be used as storage for the disk data
-  //	   (usually, "DISK")
-  //----------------------------------------------------------------------
-  
-  public SynchDisk(String name) {
-    
-    semaphore = new Semaphore("synch disk", 0);
-    lock = new Lock("synch disk lock");
-    handler = new SynchDiskIntHandler(this);
-    disk = new Disk(name, handler);
+  /** To synchronize requesting thread with the interrupt handler. */
+  Semaphore semaphore;
 
+  /** Only one read/write request can be sent to the disk at a time. */
+  Lock lock;
 
+  /**
+   * Initialize the synchronous interface to the physical disk, in turn
+   * initializing the physical disk.
+   *
+   * @param name UNIX file name to be used as storage for the disk data
+   *   (usually, "DISK")
+   */
+  public DiskDriver(String name) {
+    semaphore = new Semaphore("synch disk: " + name, 0);
+    lock = new Lock("synch disk lock: " + name);
+    disk = new Disk(name, new DiskIntHandler());
   }
 
-  //----------------------------------------------------------------------
-  // readSector
-  // 	Read the contents of a disk sector into a buffer.  Return only
-  //	after the data has been read.
-  //
-  //	"sectorNumber" -- the disk sector to read
-  //	"data" -- the buffer to hold the contents of the disk sector
-  //----------------------------------------------------------------------
-
+  /**
+   * Read the contents of a disk sector into a buffer.  Return only
+   *	after the data has been read.
+   *
+   * @param sectorNumber The disk sector to read.
+   * @param data The buffer to hold the contents of the disk sector.
+   * @param index Offset in the buffer at which to place the data.
+   */
   public void readSector(int sectorNumber, byte[] data, int index) {
     lock.acquire();			// only one disk I/O at a time
     disk.readRequest(sectorNumber, data, index);
@@ -71,15 +73,14 @@ class SynchDisk {
     lock.release();
   }
 
-  //----------------------------------------------------------------------
-  // writeSector
-  // 	Write the contents of a buffer into a disk sector.  Return only
-  //	after the data has been written.
-  //
-  //	"sectorNumber" -- the disk sector to be written
-  //	"data" -- the new contents of the disk sector
-  //----------------------------------------------------------------------
-
+  /**
+   * Write the contents of a buffer into a disk sector.  Return only
+   *	after the data has been written.
+   *
+   * @param sectorNumber The disk sector to be written.
+   * @param data The new contents of the disk sector.
+   * @param index Offset in the buffer from which to get the data.
+   */
   public void writeSector(int sectorNumber, byte[] data, int index) {
     lock.acquire();			// only one disk I/O at a time
     disk.writeRequest(sectorNumber, data, index);
@@ -87,31 +88,17 @@ class SynchDisk {
     lock.release();
   }
 
-  //----------------------------------------------------------------------
-  // requestDone
-  // 	Disk interrupt handler.  Wake up any thread waiting for the disk
-  //	request to finish.
-  //----------------------------------------------------------------------
-
-  public void requestDone() { 
-    semaphore.V();
+  /**
+   * DiskDriver interrupt handler class.
+   */
+  class DiskIntHandler extends InterruptHandler {
+      /**
+       * When the disk interrupts, just wake up the thread that issued
+       * the request that just finished.
+       */
+      public void serviceDevice() {
+	  semaphore.V();
+      }
   }
 
 }
-
-
-// SynchDisk interrupt handler class
-//
-class SynchDiskIntHandler implements Runnable {
-  private SynchDisk disk;
-
-  public SynchDiskIntHandler(SynchDisk dsk) {
-    disk = dsk;
-  }
-  
-  public void run() {
-    disk.requestDone();
-  }
-}
-
-

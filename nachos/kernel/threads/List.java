@@ -1,77 +1,57 @@
-// list.java
+// List.java
 //
 //     	Class of singly-linked lists of objects.
 //
-// 	A "ListElement" is allocated for each item to be put on the
-//	list; it is de-allocated when the item is removed. This means
-//      we don't need to keep a "next" pointer in every object we
-//      want to put on a list.
-// 
-//     	NOTE: Mutual exclusion must be provided by the caller.
-//  	If you want a synchronized list, you must use the routines 
-//	in synchlist.cc.
-//
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
-// The following class defines a "list element" -- which is
-// used to keep track of one item on a list.  It is equivalent to a
-// LISP cell, with a "car" ("next") pointing to the next element on the list,
-// and a "cdr" ("item") pointing to the item on the list.
-//
-// [ <sigh>--make that ``"car" ("item") pointing to the item on the list,
-// and "cdr" ("next") pointing to the next element on the list.''  Silly
-// systems people.  :-)
-//                        -RCC ]
-//
-// Internal data structures kept public so that List operations can
-// access them directly.
+package nachos.kernel.threads;
 
+/**
+ * The following class defines a "list" -- a singly linked list of
+ * list elements, each of which points to a single item on the list.
+ * Although the Java API provides classes with functionality that subsume
+ * this one, linked lists are such an important data structure in operating
+ * systems that it seemed like a good idea to include here an implementation
+ * "from scratch".
+ *
+ * By using the sortedInsert() method, the list can be kept in sorted
+ * in increasing order with respect to a "sortKey".
+ *
+ * NOTE: Mutual exclusion must be provided by the caller.
+ * If you want a synchronized list, you must use the routines 
+ * in synchlist.cc.
+ */
+public class List {
 
-// The following class defines a "list" -- a singly linked list of
-// list elements, each of which points to a single item on the list.
-//
-// By using the "Sorted" functions, the list can be kept in sorted
-// in increasing order by "key" in ListElement.
+  /** Head of the list, null if list is empty */
+  private ListElement first;
 
-class List {
-  private static ListElement free;  // freeList of ListElements 
-                                    // (for efficiency)
-  private static int numFree;  // number of elements in freeList
-  private static final int NumFreeMax = 1024;
+  /** Last element of the list. */
+  private ListElement last;
 
-  private ListElement first; // Head of the list, null if list is empty
-  private ListElement last;  // Last element of list
-
-  static {
-    free = null;
-    numFree = 0;
-  }
-
-  //----------------------------------------------------------------------
-  //	Initialize a list, empty to start with.
-  //	Elements can now be added to the list.
-  //----------------------------------------------------------------------
-
+  /**
+   * Initialize a list, empty to start with.
+   * Elements can then be added to the list.
+   */
   public void List() { 
     first = last = null; 
   }
 
-  //----------------------------------------------------------------------
-  //      Append an "item" to the end of the list.
-  //      
-  //	Allocate a ListElement to keep track of the item.
-  //      If the list is empty, then this will be the only element.
-  //	Otherwise, put it at the end.
-  //
-  //	"item" is the thing to put on the list, it can be a pointer to 
-  //		anything.
-  //----------------------------------------------------------------------
-
+  /**
+   * Append an "item" to the end of the list.
+   *
+   * Allocate a ListElement to keep track of the item.
+   *    If the list is empty, then this will be the only element.
+   *	Otherwise, put it at the end.
+   *
+   * @param item The thing to put on the list, it can be any object.
+   */
   public void append(Object item) {
-    ListElement element = getElement(item, 0);
+    ListElement element = new ListElement(item, 0);
 
     if (isEmpty()) {		// list is empty
       first = element;
@@ -82,19 +62,17 @@ class List {
     }
   }
 
-  //----------------------------------------------------------------------
-  //      Put an "item" on the front of the list.
-  //      
-  //	Allocate a ListElement to keep track of the item.
-  //      If the list is empty, then this will be the only element.
-  //	Otherwise, put it at the beginning.
-  //
-  //	"item" is the thing to put on the list, it can be a pointer to 
-  //		anything.
-  //----------------------------------------------------------------------
-
+  /**
+   *    Put an "item" on the front of the list.
+   *
+   * Allocate a ListElement to keep track of the item.
+   *    If the list is empty, then this will be the only element.
+   *	Otherwise, put it at the end.
+   *
+   * @param item The thing to put on the list, it can be any object.
+   */
   public void prepend(Object item) {
-    ListElement element = getElement(item, 0);
+    ListElement element = new ListElement(item, 0);
 
     if (isEmpty()) {		// list is empty
       first = element;
@@ -105,29 +83,31 @@ class List {
     }
   }
 
-  //----------------------------------------------------------------------
-  //      Remove the first "item" from the front of the list.
-  // 
-  // Returns:
-  //	Pointer to removed item, NULL if nothing on the list.
-  //----------------------------------------------------------------------
-
+  /**
+   * Remove the first "item" from the front of the list.
+   *
+   * @return the removed item, or null if nothing on the list.
+   */
   public Object remove() {
     if (isEmpty()) 
       return null;
     else {
-      ListElement e = sortedRemove();
-      Object o = e.getItem();
-      freeElement(e); 
-      return o;
+      ListElement e = first;
+      if (first == last) {	// list had one item, now has none 
+	  first = null;
+	  last = null;
+      } else {
+	  first = e.next;
+      }
+      return(e.item);
     }
   }
 
-
-  //----------------------------------------------------------------------
-  //      Returns true if the list is empty (has no items).
-  //----------------------------------------------------------------------
-
+  /**
+   * Determine if the list is empty (has no items).
+   *
+   * @return true if the list is empty, otherwise false.
+   */
   public boolean isEmpty() { 
     if (first == null)
       return true;
@@ -135,22 +115,20 @@ class List {
       return false; 
   }
 
-  //----------------------------------------------------------------------
-  //      Insert an "item" into a list, so that the list elements are
-  //	sorted in increasing order by "sortKey".
-  //      
-  //	Allocate a ListElement to keep track of the item.
-  //      If the list is empty, then this will be the only element.
-  //	Otherwise, walk through the list, one element at a time,
-  //	to find where the new item should be placed.
-  //
-  //	"item" is the thing to put on the list, it can be any Object
-  //		anything.
-  //	"sortKey" is the priority of the item.
-  //----------------------------------------------------------------------
-
+  /**
+   * Insert an "item" into a list, so that the list elements are
+   * sorted in increasing order by "sortKey".
+   *
+   * Allocate a ListElement to keep track of the item.
+   * If the list is empty, then this will be the only element.
+   * Otherwise, walk through the list, one element at a time,
+   * to find where the new item should be placed.
+   *
+   * @param item The thing to put on the list, it can be any object.
+   * @param sortKey The priority of the item.
+   */
   public void sortedInsert(Object item, long sortKey) {
-    ListElement element = getElement(item, sortKey);
+    ListElement element = new ListElement(item, sortKey);
     ListElement tmp;		// keep track
 
     if (isEmpty()) {	// if list is empty, put
@@ -173,75 +151,37 @@ class List {
     }
   }
 
-  //----------------------------------------------------------------------
-  //      Remove the first "item" from the front of a sorted list.
-  // 
-  // Returns:
-  //	removed item, null if nothing on the list.
-  //----------------------------------------------------------------------
+  /**
+   * The following class defines a "list element" -- which is
+   * used to keep track of one item on a list.  It is equivalent to a
+   * LISP cell, with a "car" ("item") pointing to the item element on the list,
+   * and a "cdr" ("next") pointing to the next item on the list.
+   * A "list element" is allocated for each item to be put on the
+   * list; it is de-allocated when the item is removed. This means
+   * we don't need to keep a "next" pointer in every object we
+   * want to put on a list.
+   */
+  private static class ListElement {
+      /** The next element on list, null if this is the last. */
+      ListElement next;
 
-  public ListElement sortedRemove() {
-    ListElement element = first;
-    ListElement thing;
+      /** Priority, for a sorted list. */
+      long key;
 
-    if (isEmpty()) 
-	return null;
+      /** Reference to item on the list. */
+      Object item;
 
-    thing = first;
-    if (first == last) {	// list had one item, now has none 
-        first = null;
-	last = null;
-    } else {
-      first = element.next;
-    }
-
-    return thing;
+      /**
+       * Initialize a list element, so it can be added somewhere on a list.
+       *
+       * @param item  The item to be put on the list, it can be any object.
+       * @param sortKey  The priority of the item, if any.
+       */
+      public ListElement(Object item, long sortKey) { 
+	  this.item = item;
+	  key = sortKey;
+	  next = null;	// assume we'll put it at the end of the list 
+      }
   }
-
-
-  // invoke the print method for each item on the list
-  // (poor Java programmer's Mapcar)
-  public void print() {
-    for (ListElement le = first; le != null; le = le.next) {
-      Printable p =  (Printable)le.item;
-      p.print();
-    }
-  }
-
-  // for efficiency, we maintain a freelist of ListElements to reduce
-  // dynamic memory allocation
-  private static ListElement getElement(Object o, long sortKey) {
-    //System.out.println("get, numFree=" + numFree);
-    if (free == null) {
-      //System.out.println("not enough");
-      return new ListElement(o, sortKey);
-    } else {
-      ListElement tmp = free;
-      free = tmp.next;
-      tmp.item = o;
-      tmp.key = sortKey;
-      tmp.next = null;
-      numFree--;
-      return tmp;
-    }
-  }
-
-  // This method 
-  // can be optionally used to improve efficiency
-  // by returning a ListElement obtained via the sortedRemove() method
-  // to the pool of free ListElements.
-  public static void freeElement(ListElement e) {
-    //System.out.println("free, numFree=" + numFree);
-    if (numFree < NumFreeMax) {
-      e.next = free;
-      free = e;
-      e.item = null;  // Allow any item to be garbage collected!
-      numFree++;
-    }
-    //else System.out.println("too many");
-  }
-
 }
-
-
 

@@ -3,85 +3,67 @@
 //
 //	Create two threads, and have them context switch
 //	back and forth between themselves by calling yield(), 
-//	to illustratethe thread system.
+//	to illustrate the thread system.
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
+package nachos.kernel.threads.test;
 
-//----------------------------------------------------------------------
-// SimpleRunnable object
-// 	Loop 5 times, yielding the CPU to another ready thread 
-//	each iteration.
-//
-//	"which" is simply a number identifying the thread, for debugging
-//	purposes.
-//----------------------------------------------------------------------
+import nachos.Debug;
+import nachos.machine.NachosThread;
+import nachos.machine.Timer;
+import nachos.kernel.devices.InterruptHandler;
+import nachos.kernel.threads.Scheduler;
 
-class SimpleRunnable implements Runnable {
+/**
+ * Set up a ping-pong between two threads, by forking two threads
+ * to execute SimpleRunnable objects.
+ */
+public class ThreadTest implements Runnable {
+  /**
+   * Static variables to hold the instances we create and keep them
+   * from being garbage collected.
+   */
+  private static ThreadTest t1, t2;
+
+  /** Integer identifier that indicates which thread we are. */
   private int which;
-    
-  public SimpleRunnable(int w) {
-    which = w;
+
+  /**
+   * Entry point for the test.
+   *
+   * @param args Command-line arguments -- currently ignored.
+   */
+  public static void start(String[] args) {
+    Debug.println('t', "Entering ThreadTest");
+    t1 = new ThreadTest(1);
+    t2 = new ThreadTest(2);
   }
 
+  /**
+   * Initialize an instance of ThreadTest and start a new thread running
+   * on it.
+   *
+   * @param w  An integer identifying this instance of ThreadTest.
+   */
+  public ThreadTest(int w) {
+    which = w;
+    Scheduler.fork(new NachosThread("Test thread " + w), this);
+  }
+
+  /**
+   * Loop 5 times, yielding the CPU to another ready thread 
+   * each iteration.
+   */
   public void run() {
     for (int num = 0; num < 5; num++) {
 	System.out.print("*** thread " + which + " looped " + num + " times\n");
-	NachosThread.thisThread().Yield();
+	Scheduler.yield();
     }
-  }
-
-}
-
-
-class AlarmObject implements Runnable {
-  private int which;
-    
-  public AlarmObject(int w) {
-    which = w;
-  }
-
-  public void run() {
-    System.out.println("Alarm " + which);
-  }
-
-}
-
-
-//----------------------------------------------------------------------
-// ThreadTest object
-// 	Set up a ping-pong between two threads, by forking a thread 
-//	to execute a SimpleRunnable object, and then calling 
-//      SimpleRunnable.run() on another instance ourselves.
-//----------------------------------------------------------------------
-
-class ThreadTest {
-  private static NachosThread th1,th2;
-  private static Timer t1,t2,t3;
-  private static SimpleRunnable o1, o2;
-  
-  public static void start() {
-
-    Debug.println('t', "Entering SimpleTest");
-
-    th1 = new NachosThread("Testthread 1");
-    th2 = new NachosThread("Testthread 2");
-    o1 = new SimpleRunnable(1);
-    o2 = new SimpleRunnable(2);
-
-    t1 = new Timer(new AlarmObject(1), false, true);
-    t2 = new Timer(new AlarmObject(2), false, true);
-    t3 = new Timer(new AlarmObject(3), false, true);
-
-    th1.fork(o1);
-    th2.fork(o2);
-    
-    t1.cancel();
-    t2.cancel();
-    t3.cancel();
-
+    Scheduler.finish();
   }
 }

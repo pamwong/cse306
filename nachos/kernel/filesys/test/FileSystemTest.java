@@ -1,30 +1,41 @@
 // FileSystemTest.java
 //	Simple test routines for the file system.  
 //
-//	We implement:
-//	   Copy -- copy a file from UNIX to Nachos
-//	   Print -- cat the contents of a Nachos file 
-//	   Perftest -- a stress test for the Nachos file system
-//		read and write a really large file in tiny chunks
-//		(won't work on baseline system!)
-//
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and 
 // limitation of liability and disclaimer of warranty provisions.
 
-import java.io.*;
+package nachos.kernel.filesys.test;
 
-class FileSystemTest {
-  // make it small, just to be difficult
+import java.io.*;
+import nachos.Debug;
+import nachos.machine.Machine;
+import nachos.kernel.Nachos;
+import nachos.kernel.filesys.OpenFile;
+import nachos.kernel.filesys.FileSystem;
+
+/**
+ * This class implements some simple test routines for the file system.
+ * We implement:
+ *	   Copy -- copy a file from UNIX to Nachos;
+ *	   Print -- cat the contents of a Nachos file;
+ *	   Perftest -- a stress test for the Nachos file system
+ *		read and write a really large file in tiny chunks
+ *		(won't work on baseline system!).
+ */
+public class FileSystemTest {
+  /** Transfer data in small chunks, just to be difficult. */
   private static final int TransferSize = 10;
 
-  //----------------------------------------------------------------------
-  // copy
-  // 	Copy the contents of the UNIX file "from" to the Nachos file "to"
-  //----------------------------------------------------------------------
-  
-  public static void copy(String from, String to) {
+  /**
+   * Copy the contents of the host file "from" to the Nachos file "to"
+   *
+   * @param from The name of the file to be copied from the host filesystem.
+   * @param to The name of the file to create on the Nachos filesystem.
+   */
+  private static void copy(String from, String to) {
     File fp;
     FileInputStream fs;
     OpenFile openFile;
@@ -69,12 +80,12 @@ class FileSystemTest {
     try {fs.close();} catch (IOException e) {}
   }
 
-  //----------------------------------------------------------------------
-  // Print
-  // 	Print the contents of the Nachos file "name".
-  //----------------------------------------------------------------------
-
-  public static void print(String name) {
+  /**
+   * Print the contents of the Nachos file "name".
+   *
+   * @param name The name of the file to print.
+   */
+  private static void print(String name) {
     OpenFile openFile;    
     int i, amountRead;
     byte buffer[];
@@ -92,25 +103,46 @@ class FileSystemTest {
     return;
   }
 
-  //----------------------------------------------------------------------
-  // PerformanceTest
-  // 	Stress the Nachos file system by creating a large file, writing
-  //	it out a bit at a time, reading it back a bit at a time, and then
-  //	deleting the file.
-  //
-  //	Implemented as three separate routines:
-  //	  FileWrite -- write the file
-  //	  FileRead -- read the file
-  //	  PerformanceTest -- overall control, and print out performance #'s
-  //----------------------------------------------------------------------
+  /**
+   * Stress the Nachos file system by creating a large file, writing
+   * it out a bit at a time, reading it back a bit at a time, and then
+   * deleting the file.
+   *
+   *	Implemented as three separate routines:
+   *	  FileWrite -- write the file;
+   *	  FileRead -- read the file;
+   *	  PerformanceTest -- overall control, and print out performance #'s.
+   */
+  private static void performanceTest() {
+    Debug.print('+', "Starting file system performance test:\n");
+    Machine.stats.print();
+    fileWrite();
+    fileRead();
+    if (!Nachos.fileSystem.remove(FileName)) {
+      Debug.printf('+', "Perf test: unable to remove %s\n", FileName);
+      return;
+    }
+    Machine.stats.print();
+  }
 
+  /** Name of the file to create for the performance test. */
   private static final String FileName = "TestFile";
+
+  /** Test data to be written to the file in the performance test. */
   private static final String ContentString = "1234567890";
+
+  /** Length of the test data. */
   private static final int ContentSize = ContentString.length();
+
+  /** Bytes in the test data. */
   private static final byte Contents[] = ContentString.getBytes();
-  //private static final int FileSize = ContentSize * 5000;
+
+  /** Total size of the test file. */
   private static final int FileSize = ContentSize * 300;
 
+  /**
+   * Write the test file for the performance test.
+   */
   private static void fileWrite() {
     OpenFile openFile;    
     int i, numBytes;
@@ -135,6 +167,9 @@ class FileSystemTest {
     }
   }
 
+  /**
+   * Read and verify the file for the performance test.
+   */
   private static void fileRead() {
     OpenFile openFile;    
     byte buffer[] = new byte[ContentSize];
@@ -156,22 +191,53 @@ class FileSystemTest {
     }
   }
 
+  /**
+   * Compare two byte arrays to see if they agree up to a specified length.
+   *
+   * @param a The first byte array.
+   * @param b The second byte array.
+   * @param len The number of bytes to compare.
+   * @return true if the arrays agree up to the specified number of bytes,
+   * false otherwise.
+   */
   private static boolean byteCmp(byte a[], byte b[], int len) {
     for (int i = 0; i < len; i++)
       if (a[i] != b[i]) return false;
     return true;
   }
 
-  public static void performanceTest() {
-    Debug.print('+', "Starting file system performance test:\n");
-    Nachos.stats.print();
-    fileWrite();
-    fileRead();
-    if (!Nachos.fileSystem.remove(FileName)) {
-      Debug.printf('+', "Perf test: unable to remove %s\n", FileName);
-      return;
+  /**
+   * Entry point for the filesystem test.
+   * Process command-line arguments, performing any actions they indicate.
+   *
+   * @param args The command-line arguments.
+   */
+  public static void start(String[] args) {
+    for (int i=0; i<args.length; i++) {
+	if (args[i].equals("-cp")) {	// copy from UNIX to Nachos
+	    Debug.ASSERT((i<args.length-2),
+			 "usage: -cp <filename1> <filename2>");
+	    copy(args[i+1], args[i+2]);
+	    i += 2;
+	}
+	if (args[i].equals("-p")) {	// print a Nachos file
+	    Debug.ASSERT(i<args.length-1,
+			 "usage: -p <filename>");
+	    print(args[++i]);
+	} 
+	if (args[i].equals("-r")) {	// remove Nachos file
+	    Debug.ASSERT(i<args.length-1);
+	    Nachos.fileSystem.remove(args[++i]);
+	} 
+	if (args[i].equals("-l")) {	// list Nachos directory
+	    Nachos.fileSystem.list();
+	} 
+	if (args[i].equals("-D")) {	// print entire filesystem
+	    Nachos.fileSystem.print();
+	} 
+	if (args[i].equals("-t")) {        // performance test
+	    performanceTest();
+	}
     }
-    Nachos.stats.print();
   }
-
 }

@@ -1,31 +1,38 @@
 // FileSystemStub.java
-//	Class to represent the Nachos file system.
-//
-//	A file system is a set of files stored on disk, organized
-//	into directories.  Operations on the file system have to
-//	do with "naming" -- creating, opening, and deleting files,
-//	given a textual file name.  Operations on an individual
-//	"open" file (read, write, close) are to be found in the OpenFile
-//	class (openfile.h).
-//
-//	We define two separate implementations of the file system. 
-//	This ("Stub") version just re-defines the Nachos file system 
-//	operations as operations on the native UNIX file system on the machine
-//	running the Nachos simulation.  This is provided in case the
-//	multiprogramming and virtual memory assignments (which make use
-//	of the file system) are done before the file system assignment.
+//	Implementation of the Nachos file system in terms of the native
+//	filesystem on the host platform.
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
+package nachos.kernel.filesys;
+
 import java.io.*;
 
-class FileSystemStub implements FileSystem {
+/**
+ * This "filesystem stub" class implements a Nachos filesystem by simply
+ * passing the filesystem operations through to the native filesystem on
+ * the host platform.  This is provided in case the multiprogramming and
+ * virtual memory assignments (which make use of the file system) are done
+ * before the file system assignment.
+ */
+class FileSystemStub extends FileSystem {
+  /**
+   * Constructor is protected so that all creations are funneled through
+   * the init() factory method of the super class.
+   */
+  protected FileSystemStub() { super(); }
 
-  public FileSystemStub(boolean format) {}
-
+  /**
+   * Create a new file with a specified name and size.
+   *
+   * @param name The name of the file.
+   * @param initialSize The size of the file.
+   * @return true if the operation was successful, otherwise false.
+   */
   public boolean create(String name, long initialSize) { 
     FileOutputStream fsFile;
 
@@ -39,6 +46,14 @@ class FileSystemStub implements FileSystem {
     return true; 
   }
 
+  /**
+   * Open the file with the specified name and return an OpenFile
+   * object that provides access to the file contents.
+   *
+   * @param name The name of the file.
+   * @return An OpenFile object that provides access to the file contents,
+   * if the file was successfully opened, otherwise null.
+   */
   public OpenFile open(String name) {
     RandomAccessFile file;
 
@@ -52,6 +67,12 @@ class FileSystemStub implements FileSystem {
     return new OpenFileStub(file);
   }
 
+  /**
+   * Remove the file with the specified name.
+   *
+   * @param name The name of the file.
+   * @return true if the operation was successful, otherwise false.
+   */
   public boolean remove(String name) { 
     File file;
 

@@ -4,51 +4,67 @@
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
+// Copyright (c) 2003 State University of New York at Stony Brook.
 // All rights reserved.  See the COPYRIGHT file for copyright notice and
 // limitation of liability and disclaimer of warranty provisions.
 
-import java.io.*;
+package nachos.kernel.userprog.test;
 
-//----------------------------------------------------------------------
-// StartProcess
-// 	Run a user program.  Open the executable, load it into
-//	memory, and jump to it.
-//----------------------------------------------------------------------
+import nachos.Debug;
+import nachos.machine.Machine;
+import nachos.kernel.Nachos;
+import nachos.kernel.threads.Scheduler;
+import nachos.kernel.userprog.AddrSpace;
+import nachos.kernel.userprog.UserThread;
+import nachos.kernel.filesys.FileSystem;
+import nachos.kernel.filesys.OpenFile;
 
-class ProgTest implements Runnable {
+/**
+ * This is a test class for demonstrating that Nachos can load a user
+ * program and execute it.
+ */
+public class ProgTest implements Runnable {
 
+  /** The name of the program to execute. */
   static String execName;
 
+  /**
+   * Start the test by creating a new address space and user thread,
+   * then arranging for the new thread to begin executing the run() method
+   * of this class.
+   *
+   * @param filename The name of the program to execute.
+   */
   public ProgTest(String filename) {
-    NachosThread t = new NachosThread("ProgTest thread");
-
     Debug.println('a', "starting ProgTest");
+
     execName = filename;
-    t.fork(this);
+    AddrSpace space = new AddrSpace();
+    UserThread t = new UserThread("ProgTest thread", space);
+    Scheduler.fork(t, this);
   }
 
+  /**
+   * Entry point for the thread created to run the user program.
+   * The specified executable file is used to initialize the address
+   * space for the current thread.  Once this has been done,
+   * Machine.run() is called to transfer control to user mode.
+   */
   public void run() {
-    RandomAccessFile executable;
-    AddrSpace space;
+    OpenFile executable;
     
-    try {
-      executable = new RandomAccessFile(execName, "r");
-    }
-    catch (IOException e) {
-      Debug.println('+', "Unable to open executable file: " + execName);
-      return;
+    if((executable = Nachos.fileSystem.open(execName)) == null) {
+	Debug.println('+', "Unable to open executable file: " + execName);
+	Scheduler.finish();
+	return;
     }
 
-    try {
-      space = new AddrSpace(executable);
+    AddrSpace space = ((UserThread)Scheduler.currentThread()).getSpace();
+    if(space.exec(executable) == -1) {
+	Debug.println('+', "Unable to read executable file: " + execName);
+	Scheduler.finish();
+	return;
     }
-    catch (IOException e) {
-      Debug.println('+', "Unable to read executable file: " + execName);
-      return;
-    }
-
-
-    NachosThread.thisThread().setSpace(space);
 
     space.initRegisters();		// set the initial register values
     space.restoreState();		// load page table register
@@ -59,4 +75,21 @@ class ProgTest implements Runnable {
 					// by doing the syscall "exit"
   }
 
+  /**
+   * Entry point for the test.  Command line arguments are checked for
+   * the name of the program to execute, then the test is started by
+   * creating a new ProgTest object.
+   *
+   * @param args Command line arguments that name the program to be
+   * executed.
+   */
+  public static void start(String[] args) {
+    for (int i=0; i<args.length; i++) {
+	if (args[i].equals("-x")) {           // run a user program
+	  Debug.ASSERT((i<args.length-1),
+		       "usage: -x <filename>");
+	  ProgTest testObj = new ProgTest(args[++i]);
+	}
+    }
+  }
 }
