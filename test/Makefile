@@ -13,7 +13,7 @@
 .SUFFIXES:
 
 NACHOSDIR=..
-INCDIR = $(NACHOSDIR)/include
+INCDIR = $(NACHOSDIR)/test
 
 # Change the following to point to where you have the MIPS cross-compiler
 # installed.
