@@ -130,14 +130,15 @@ public class Scheduler {
    * @param nextThread The thread to be given the CPU.
    */
   private static void run(NachosThread nextThread) {
-    Debug.ASSERT(currentThread != null);
+    Debug.ASSERT(currentThread != null
+		 && currentThread.getStatus() != NachosThread.RUNNING);
+
     currentThread.saveState();  // save the user's CPU registers and
     				// address space, if any.
     
     Debug.println('t', "Switching from thread: " + currentThread.getName() +
 		  " to thread: " + nextThread.getName());
 
-    nextThread.setStatus(NachosThread.RUNNING);
     NachosThread oldThread = currentThread;
     currentThread = nextThread;
     oldThread.switchTo(nextThread);
