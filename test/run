@@ -1,1 +1,1 @@
-/usr/site/jdk-1.1.6/bin/java -classpath .:../machine:../filesys:../threads:../userprog:../vm:/usr/site/jdk-1.1.6/lib/classes.zip Nachos $*
+java -classpath .:../machine:../filesys:../threads:../userprog:../vm Nachos $*
