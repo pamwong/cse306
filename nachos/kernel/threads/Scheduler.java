@@ -149,13 +149,6 @@ public class Scheduler {
 
     currentThread.restoreState();   // restore user's CPU registers and
     				    // address space, if any.
-
-    // If the old thread gave up the processor because it was finishing,
-    // we need to delete its carcass. 
-    if (threadToBeDestroyed != null) {
-	threadToBeDestroyed.setStatus(NachosThread.DESTROYED);
-	threadToBeDestroyed = null;
-    }
   }
 
   /**
@@ -235,10 +228,15 @@ public class Scheduler {
     Interrupt.setLevel(Interrupt.IntOff);		
     Debug.ASSERT(currentThread != null);
 
+    // Delete the carcass of any thread that died previously.
+    // This ensures that there is at most one dead thread ever waiting
+    // to be cleaned up.
+    if (threadToBeDestroyed != null)
+	threadToBeDestroyed.setStatus(NachosThread.DESTROYED);
+
     Debug.print('t', "Finishing thread: " + currentThread.getName() +"\n");
 
     threadToBeDestroyed = currentThread;
-    
     sleep();				
     // not reached
   }
