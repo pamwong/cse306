@@ -256,7 +256,8 @@ public class Scheduler {
 
   /**
    * 	Interrupt handler for the timer device.  The timer device is
-   *	set up to interrupt the CPU periodically (once every TimerTicks).
+   *	set up to interrupt the CPU periodically
+   *    (once every Timer.DefaultInterval ticks).
    *	The serviceDevice() method is called with interrupts disabled each
    *	time there is a timer interrupt.
    */
