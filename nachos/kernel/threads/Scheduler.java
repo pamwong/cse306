@@ -58,7 +58,6 @@ class Scheduler {
 
     synchronized (nextThread) {
       nextThread.setStatus(NachosThread.RUNNING);
-      nextThread.notify();
     }
 
     // nextThread is now running
