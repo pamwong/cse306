@@ -79,7 +79,7 @@ public class Condition {
     Debug.ASSERT(conditionLock.isHeldByCurrentThread(),
 		 "Non-owner tried to manipulate condition variable.");
     Debug.printf('s', "Thread %s waiting on condition variable %s\n",
-		 NachosThread.currentThread().getName(), name);
+		 Scheduler.currentThread().getName(), name);
 
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     conditionLock.release();
