@@ -107,13 +107,9 @@ class FileSystemTest {
   private static final String FileName = "TestFile";
   private static final String ContentString = "1234567890";
   private static final int ContentSize = ContentString.length();
-  private static final byte Contents[] = new byte[ContentSize];
+  private static final byte Contents[] = ContentString.getBytes();
   //private static final int FileSize = ContentSize * 5000;
   private static final int FileSize = ContentSize * 300;
-
-  static {
-    ContentString.getBytes(0, ContentSize, Contents, 0);
-  }
 
   private static void fileWrite() {
     OpenFile openFile;    

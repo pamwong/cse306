@@ -44,7 +44,7 @@ class DirectoryEntry {
       inUse = true; 
       sector = Disk.intInt(buffer, pos+1);
       nameLen = Disk.intInt(buffer, pos+5);
-      name = new String(buffer, 0, pos+9, nameLen);
+      name = new String(buffer, pos+9, nameLen);
       //System.out.println("internalize, name=" + name + "nameLen=" + nameLen);
     } else 
       inUse = false;
@@ -56,7 +56,9 @@ class DirectoryEntry {
       buffer[pos] = 1; 
       Disk.extInt(sector, buffer, pos+1);
       Disk.extInt(nameLen, buffer, pos+5);
-      name.getBytes(0, nameLen, buffer, pos+9);
+      byte[] nameBytes = name.getBytes();
+      for(int i = 0; i < nameLen; i++)
+	  buffer[pos+9+i] = nameBytes[i];
       //System.out.println("externalize, name=" + name + "nameLen=" + nameLen);
     } else 
       buffer[pos] = 0;
