@@ -22,7 +22,7 @@ import nachos.machine.Machine;
 public class UserThread extends NachosThread {
 
   /** The context in which this thread will execute. */
-  private AddrSpace space = null;
+  public final AddrSpace space;
 
   // A thread running a user program actually has *two* sets of 
   // CPU registers -- one for its state while executing user code,
@@ -45,15 +45,6 @@ public class UserThread extends NachosThread {
   public UserThread(String name, Runnable runObj, AddrSpace addrSpace) {
       super(name, runObj);
       space = addrSpace;
-  }
-
-  /**
-   * Get the address space associated with this thread.
-   *
-   * @return the address space associated with this thread.
-   */
-  public AddrSpace getSpace() {
-      return(space);
   }
 
   /**

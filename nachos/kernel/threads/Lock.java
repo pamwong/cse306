@@ -53,13 +53,13 @@ public class Lock {
   public void acquire() {
 
     Debug.printf('s', "Acquiring lock %s for thread %s\n",
-		 name, Scheduler.currentThread().getName());
+		 name, Scheduler.currentThread().name);
 
     sem.P();
     owner = Scheduler.currentThread();
 
     Debug.printf('s', "Acquired lock %s for thread %s\n",
-		 name, Scheduler.currentThread().getName());
+		 name, Scheduler.currentThread().name);
   }
 
   /**
@@ -72,13 +72,13 @@ public class Lock {
 		 "A thread which doesn't own the lock tried to " +
 		 "release it!\n");
     Debug.printf('s', "Thread %s dropping lock %s\n",
-		 Scheduler.currentThread().getName(), name);
+		 Scheduler.currentThread().name, name);
 
     owner = null;
     sem.V();
 
     Debug.printf('s', "Thread %s dropped lock %s\n",
-		 Scheduler.currentThread().getName(), name);
+		 Scheduler.currentThread().name, name);
   }
 
   /**

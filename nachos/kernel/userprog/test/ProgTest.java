@@ -59,7 +59,7 @@ public class ProgTest implements Runnable {
 	return;
     }
 
-    AddrSpace space = ((UserThread)Scheduler.currentThread()).getSpace();
+    AddrSpace space = ((UserThread)Scheduler.currentThread()).space;
     if(space.exec(executable) == -1) {
 	Debug.println('+', "Unable to read executable file: " + execName);
 	Scheduler.finish();
