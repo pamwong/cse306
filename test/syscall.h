@@ -66,7 +66,7 @@ SpaceId Exec(char *name);
 int Join(SpaceId id); 	
  
 
-/* File system operations: Create, Open, Read, Write, Close
+/* File system operations: Create, Open, Read, Write, Close, Remove
  * These functions are patterned after UNIX -- files represent
  * both files *and* hardware I/O devices.
  *
@@ -89,6 +89,9 @@ typedef int OpenFileId;
  
 /* Create a Nachos file, with "name" */
 void Create(char *name);
+
+/* Remove the Nachos file, with "name" */
+void Remove(char *name);
 
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
  * be used to read and write to the file.
