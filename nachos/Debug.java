@@ -276,7 +276,12 @@ public class Debug {
    * @param base The base in which to print the value.
    */
   private static void kprintn(long l, int base) {
-      System.out.print(Long.toString(l, base));
+      if(base == 8)
+	  System.out.print(Long.toOctalString(l));
+      else if(base == 16)
+	  System.out.print(Long.toHexString(l));
+      else
+	  System.out.print(Long.toString(l, base));
   }
 
 }
