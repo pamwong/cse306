@@ -11,10 +11,11 @@ MAKEFILES=Makefile test/Makefile bin/Makefile
 
 KERNEL=nachos/Debug.java\
 	nachos/Statistics.java\
-	nachos/kernel/kernel/Nachos/Kernel.java\
+	nachos/kernel/Nachos.java\
 	nachos/kernel/devices/DiskDriver.java\
 	nachos/kernel/devices/InterruptHandler.java\
 	nachos/kernel/devices/test/ConsoleTest.java\
+	nachos/kernel/filesys/BitMap.java\
 	nachos/kernel/filesys/Directory.java\
 	nachos/kernel/filesys/DirectoryEntry.java\
 	nachos/kernel/filesys/FileHeader.java\
