@@ -1,32 +1,20 @@
 #!/bin/sh
 
-# Build "external" documentation for the machine package.
-mkdir -p doc doc/machine
-cd doc
-
-#javadoc -d machine \
-#	-doctitle "Nachos-USB Machine Documentation" \
-#	-windowtitle "Nachos-USB Machine Documentation" \
-#	-sourcepath ".." -classpath ".." \
-#	nachos.machine
-
-# Build "internal" documentation for everything but the machine package.
-
-# Uncomment the following if documentation is available for the
-# "machine" package.
-#MACHINE="-link machine"
-
-# Uncomment the following if documentation is not available for the
-# "machine" package.
-MACHINE=
-
 # Uncomment the following if Windows is being used.
-CLASSPATH=..\;../machine.jar
+CLASSPATH=.\;machine.jar
 
 # Uncomment the following if Unix is being used.
-#CLASSPATH=..:../machine.jar
+#CLASSPATH=.:machine.jar
 
-javadoc	$MACHINE -classpath "$CLASSPATH" -sourcepath ".." \
+# Build "external" documentation for the machine package.
+javadoc -d doc/machine \
+	-doctitle "Nachos-USB Machine Documentation" \
+	-windowtitle "Nachos-USB Machine Documentation" \
+	-sourcepath "." -classpath "." \
+	nachos.machine
+
+# Build "internal" documentation for everything but the machine package.
+javadoc	-d doc/kernel $MACHINE -classpath $CLASSPATH -sourcepath "." \
 	-doctitle "Nachos-USB Kernel Documentation" \
 	-windowtitle "Nachos-USB Kernel Documentation" \
 	-private \
@@ -40,3 +28,4 @@ javadoc	$MACHINE -classpath "$CLASSPATH" -sourcepath ".." \
 	nachos.kernel.devices.test \
 	nachos.kernel.filesys \
 	nachos.kernel.filesys.test
+
