@@ -66,7 +66,6 @@ public abstract class InterruptHandler
    */
   public static void yieldOnReturn() { 
     Debug.ASSERT(inHandler == true);
-    if (Interrupt.getMode() != Interrupt.IdleMode)
-	yieldOnReturn = true; 
+    yieldOnReturn = true; 
   }
 }
