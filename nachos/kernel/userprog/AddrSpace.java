@@ -26,8 +26,8 @@ import nachos.kernel.filesys.OpenFile;
 
 /**
  * This class manages "address spaces", which are the contexts in which
- * user programs execute.  For now, an address space contains two
- * "segment descriptors", which describe the the virtual-to-physical
+ * user programs execute.  For now, an address space contains a
+ * "segment descriptor", which describes the the virtual-to-physical
  * address mapping that is to be used when the user program is executing.
  * As you implement more of Nachos, it will probably be necessary to add
  * other fields to this class to keep track of things like open files,
@@ -40,16 +40,10 @@ import nachos.kernel.filesys.OpenFile;
 public class AddrSpace {
 
   /**
-   * Segment descriptor mapping the code and data portion of the
-   * virtual address space.
+   * Segment descriptor mapping the virtual address space.
    */
-  private SegmentDescriptor codeDescriptor = new SegmentDescriptor();
+  private SegmentDescriptor descriptor = new SegmentDescriptor();
 
-  /**
-   * Segment descriptor mapping the stack portion of the
-   * virtual address space.
-   */
-  private SegmentDescriptor stackDescriptor = new SegmentDescriptor();
 
   /** Default size of the user stack area -- increase this as necessary! */
   private static final int UserStackSize = 1024;
@@ -97,14 +91,11 @@ public class AddrSpace {
 
     Debug.println('a', "Initializing address space, size=" + size);
 
-    // Next, set up the segment descriptors for the memory-management hardware.
-    // We use segment 0 for code and data, and segment 1 for stack.
-    codeDescriptor.base = 0;
-    codeDescriptor.size = size - UserStackSize;
-    codeDescriptor.valid = true;
-    stackDescriptor.base = codeDescriptor.size;
-    stackDescriptor.size = UserStackSize;
-    stackDescriptor.valid = true;
+    // Next, set up the segment descriptor for the memory-management hardware.
+    // We use segment 0 for code, data, and stack -- the entire address space.
+    descriptor.base = 0;
+    descriptor.size = size;
+    descriptor.valid = true;
 
     // Zero out the entire address space, to zero the unitialized data 
     // segment and the stack segment.
@@ -155,10 +146,10 @@ public class AddrSpace {
     // of branch delay possibility
     Machine.writeRegister(Machine.NextPCReg, 4);
 
-    // Set the stack register to the end of the stack segment (segment 1);
+    // Set the stack register to the end of the segment,
     // but subtract off a bit, to accomodate compiler convention that
     // assumes space in the current frame to save four argument registers.
-    int sp = Machine.SegmentSize + UserStackSize - 16;
+    int sp = (int)(descriptor.size - 16);
     Machine.writeRegister(Machine.StackReg, sp);
     Debug.printf('a', "Initializing stack register to 0x%x\n",
 		 new Integer(sp));
@@ -181,8 +172,9 @@ public class AddrSpace {
    */
   public void restoreState() {
     SegmentDescriptor[] segmentTable = Machine.getSegmentTable();
-    segmentTable[0] = codeDescriptor;
-    segmentTable[1] = stackDescriptor;
+    segmentTable[0] = descriptor;
+    for(int i = 1; i < segmentTable.length; i++)
+	segmentTable[i] = null;
   }
 
   /**
