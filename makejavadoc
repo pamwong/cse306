@@ -1,17 +1,21 @@
 #!/bin/sh
 
 # Build "external" documentation for the machine package.
-javadoc -d doc.machine \
+mkdir -p doc doc/machine
+cd doc
+
+javadoc -d machine \
 	-doctitle "Nachos-USB Machine Documentation" \
 	-windowtitle "Nachos-USB Machine Documentation" \
-	-sourcepath "." -classpath "." \
+	-sourcepath ".." -classpath ".." \
 	nachos.machine
 
 # Build "internal" documentation for everything but the machine package.
-javadoc -d doc.kernel \
+javadoc \
 	-doctitle "Nachos-USB Kernel Documentation" \
 	-windowtitle "Nachos-USB Kernel Documentation" \
-	-sourcepath "." -classpath "." \
+	-sourcepath ".." -classpath ".." \
+	-link machine \
 	-private \
         nachos \
 	nachos.kernel \

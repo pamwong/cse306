@@ -60,7 +60,7 @@ import nachos.kernel.userprog.ExceptionHandler;
  */
 public class Nachos implements Runnable {
 
-  private static final String copyright = "Copyright (c) 1992-1993 The Regents of the University of California.  Copyright (c) 1998-1999 Rice University. All rights reserved.";
+private static final String copyright = "Copyright (c) 1992-1993 The Regents of the University of California.  Copyright (c) 1998-1999 Rice University. Copyright (c) 2003 State University of New York at Stony Brook.  All rights reserved.";
 
   /*
    * Most of the following constants that control the Nachos configuration

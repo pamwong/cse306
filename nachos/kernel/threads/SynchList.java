@@ -20,7 +20,7 @@ import nachos.Debug;
 
 /**
  *
- * This class defines a "synchronized list" -- a list for which:
+ * This class defines a "synchronized list" -- a list for which
  * these constraints hold:
  *	1. Threads trying to remove an item from a list will
  *	wait until the list has an element on it.

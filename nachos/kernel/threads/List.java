@@ -161,7 +161,7 @@ public class List {
    * we don't need to keep a "next" pointer in every object we
    * want to put on a list.
    */
-  private static class ListElement {
+  protected static class ListElement {
       /** The next element on list, null if this is the last. */
       ListElement next;
 
