@@ -30,8 +30,8 @@ LDFLAGS = -T script -N
 ASFLAGS = -mips1
 CPPFLAGS = -I$(INCDIR)
 
-CFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c
-SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S
+CFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -fno-builtin
+SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S -fno-builtin
 
 all:
 
