@@ -16,7 +16,7 @@ SECTIONS
     *(.fini)
      etext  =  .;
      _etext  =  .;
-  }
+  } >code
 
   .rdata . : {
 	  *(.rdata)
@@ -25,14 +25,15 @@ SECTIONS
   .data 0x40000000 : {
     _fdata = .;
     *(.data)
-	*(.sdata)
+    *(.sdata)
     CONSTRUCTORS
   } >data
-  _gp = ALIGN(16);
-   edata  =  .;
-   _edata  =  .;
 
-   _fbss = .;
+  _gp = ALIGN(16);
+  edata  =  .;
+  _edata  =  .;
+
+  _fbss = .;
   .sbss  . : {
     *(.sbss)
     *(.scommon)
@@ -43,7 +44,6 @@ SECTIONS
     *(COMMON)
   } >data
 
-   end = .;
-   _end = .;
+  end = .;
+  _end = .;
 }
-

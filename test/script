@@ -10,27 +10,34 @@ SECTIONS
     *(.fini)
      etext  =  .;
      _etext  =  .;
-  }
-  _fdata = ALIGN(0x80);
+  } >code
+
+  .rdata . : {
+	  *(.rdata)
+  } >code
+
   .data ALIGN(0x80) : {
-	*(.rdata)
+    _fdata = .;
     *(.data)
-	*(.sdata)
+    *(.sdata)
     CONSTRUCTORS
-  }
+  } >data
+
   _gp = ALIGN(16);
-   edata  =  .;
-   _edata  =  .;
-   _fbss = .;
+  edata  =  .;
+  _edata  =  .;
+
+  _fbss = .;
   .sbss  . : {
     *(.sbss)
     *(.scommon)
-  }
+  } >data
+
   .bss  . : {
     *(.bss)
     *(COMMON)
-  }
-   end = .;
-   _end = .;
+  } >data
+
+  end = .;
+  _end = .;
 }
- 
