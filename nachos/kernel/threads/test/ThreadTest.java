@@ -30,7 +30,6 @@ class SimpleRunnable implements Runnable {
   public void run() {
     for (int num = 0; num < 5; num++) {
 	System.out.print("*** thread " + which + " looped " + num + " times\n");
-        //Thread.currentThread().yield();
 	NachosThread.thisThread().Yield();
     }
   }
@@ -79,7 +78,6 @@ class ThreadTest {
 
     th1.fork(o1);
     th2.fork(o2);
-    //o2.run();
     
     t1.cancel();
     t2.cancel();
