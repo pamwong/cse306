@@ -10,6 +10,12 @@
 # 	to ld, in order for the routine "Start" to be loaded at location 0
 #
 
+# Uncomment the following when running on Windows.
+JAVA= java -classpath '..\machine.jar'
+
+# Uncomment the following when running on Unix.
+#JAVA= java -classpath '../machine.jar'
+
 .SUFFIXES:
 
 NACHOSDIR=..
@@ -24,7 +30,7 @@ AS = $(GCCDIR)as
 LD = $(GCCDIR)ld
 CPP = $(GCCDIR)cpp
 
-COFF2NOFF = $(GCCDIR)coff2noff
+COFF2NOFF = $(JAVA) nachos.util.Coff2Noff
 
 LDFLAGS = -T script -N
 ASFLAGS = -mips1
@@ -34,11 +40,6 @@ CFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -fno-builtin
 SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S -fno-builtin
 
 all:
-
-#$(NACHOSDIR)/bin/coff2noff:
-#	@echo "*** Missing $(NACHOSDIR)/bin/coff2noff, making that first"
-#	cd ../bin; make coff2noff
-#	@echo "*** Returning to make in test directory"
 
 start.o: start.s $(INCDIR)/syscall.h
 	$(CPP) $(CPPFLAGS) start.s > strt.s

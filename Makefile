@@ -24,9 +24,9 @@ default: kernel
 # The Cygwin "make" seems to insist on the Java source files existing
 # even when machine.jar is present, so leave this commented out.
 #
-$(MACHINE): nachos/machine/*.java
-	${JC} nachos/machine/*.java
-	jar cvf machine.jar nachos/machine/*.class
+$(MACHINE): nachos/machine/*.java nachos/util/*.java
+	${JC} nachos/machine/*.java nachos/util/*.java
+	jar cvf machine.jar nachos/machine/*.class nachos/util/*.class
 
 javadoc:
 	makejavadoc
