@@ -22,8 +22,8 @@ SECTIONS
 	  *(.rdata)
   } >code
 
-  _fdata = .;
-  .data  : {
+  _fdata = ALIGN(0x80);
+  .data ALIGN(0x80) : {
     *(.data)
 	*(.sdata)
     CONSTRUCTORS

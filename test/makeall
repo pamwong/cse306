@@ -1,8 +1,0 @@
-#!/bin/sh
-
-for FILE in *.c
-do
-   TARGET=`basename $FILE .c`
-   echo "gmake $TARGET"
-   make $TARGET
-done
