@@ -85,7 +85,7 @@ public class Scheduler {
 
     Debug.println('t', "Switching to thread: " + nextThread.getName());
 
-    nextThread.setStatus(NachosThread.RUNNING);
+    nextThread.switchTo(nextThread);
     currentThread = nextThread;
 
     // nextThread is now running
