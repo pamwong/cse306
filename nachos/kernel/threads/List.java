@@ -235,6 +235,7 @@ class List {
     if (numFree < NumFreeMax) {
       e.next = free;
       free = e;
+      item = null;  // Allow any item to be garbage collected!
       numFree++;
     }
     //else System.out.println("too many");
