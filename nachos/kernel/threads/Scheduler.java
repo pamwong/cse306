@@ -69,16 +69,15 @@ public class Scheduler {
   /**
    * Called by a Java thread (usually the initial thread that calls 
    * Nachos.main) to start the first Nachos thread.
+   * Interrupts are assumed to be off when this method is called.
    */
   public static void start() {
     NachosThread nextThread;
 
     Debug.println('t', "Scheduling first Nachos thread");
 
-    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     nextThread = findNextToRun();
     if (nextThread == null) {
-      Interrupt.setLevel(oldLevel);
       Debug.print('+', "Scheduler.start(): no NachosThread ready!");
       return;
     }
@@ -87,7 +86,6 @@ public class Scheduler {
 
     currentThread = nextThread;
     nextThread.switchTo(nextThread);
-    Interrupt.setLevel(oldLevel);
 
     // nextThread is now running
   }
