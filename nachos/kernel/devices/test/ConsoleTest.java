@@ -11,6 +11,7 @@ package nachos.kernel.devices.test;
 
 import nachos.Debug;
 import nachos.machine.Console;
+import nachos.kernel.threads.Scheduler;
 import nachos.kernel.threads.Semaphore;
 import nachos.kernel.devices.InterruptHandler;
 
@@ -45,6 +46,7 @@ public class ConsoleTest {
 
     Debug.println('c', "ConsoleTest: starting");
 
+    // Interrupt-driven mode
     readAvail = new Semaphore("read avail", 0);
     writeDone = new Semaphore("write done", 0);
     console = Console.streamConsole(in, out, new ConsHandler(readAvail), 
@@ -61,9 +63,31 @@ public class ConsoleTest {
 
       if (ch == 'q') {
 	  Debug.println('c', "ConsoleTest: quitting");
+	  console.stop();
 	  return;    // if q, quit
       }
     }
+
+    /*
+    // PIO mode -- no interrupt handlers
+    console = Console.streamConsole(in, out);
+    //console = Console.guiConsole();
+    while (true) {
+      while(!console.isInputAvail())
+	  Scheduler.yield();    // wait for character to arrive
+      ch = console.getChar();
+
+      while(console.isOutputBusy())
+	  Scheduler.yield();    // wait for previous write to finish
+      console.putChar(ch);	// echo it!
+
+      if (ch == 'q') {
+	  Debug.println('c', "ConsoleTest: quitting");
+	  console.stop();
+	  return;    // if q, quit
+      }
+    }
+    */
   }
 
   /**
