@@ -5,7 +5,7 @@
 
 COPYRIGHT=COPYRIGHT
 
-README=README test/README
+README=README.stark README.druschel test/README
 
 MAKEFILES=Makefile test/Makefile bin/Makefile
 
@@ -68,7 +68,7 @@ all: nachos.ps
 
 nachos.ps:
 	cd ..; \
-	a2ps -o - -b --margin=24 --pretty-print \
+	a2ps -o - -b --margin=24 --pretty-print --print-anyway=1 \
 		${COPYRIGHT} ${README} ${MAKEFILES} \
 		${INCLUDE} ${KERNEL} ${TEST} > print/nachos.ps
 
