@@ -113,7 +113,7 @@ public class Scheduler {
    *
    * @return the thread to be scheduled onto the CPU.
    */
-  public static NachosThread findNextToRun() {
+  private static NachosThread findNextToRun() {
     return (NachosThread)readyList.remove();
   }
 
