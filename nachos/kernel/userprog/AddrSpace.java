@@ -26,12 +26,12 @@ import nachos.kernel.filesys.OpenFile;
 
 /**
  * This class manages "address spaces", which are the contexts in which
- * user programs execute.  For now, an address space contains a "page table",
- * which describes the the virtual-to-physical address mapping that is to
- * be used when the user program is executing.  As you implement more of
- * Nachos, it will probably be necessary to add other fields to this class
- * to keep track of things like open files, network connections, etc.,
- * in use by a user program.
+ * user programs execute.  For now, an address space contains two
+ * "segment descriptors", which describe the the virtual-to-physical
+ * address mapping that is to be used when the user program is executing.
+ * As you implement more of Nachos, it will probably be necessary to add
+ * other fields to this class to keep track of things like open files,
+ * network connections, etc., in use by a user program.
  *
  * NOTE: Most of what is in currently this class assumes that just one user
  * program at a time will be executing.  You will have to rewrite this
@@ -67,7 +67,7 @@ public class AddrSpace {
    *
    * First, set up the translation from program memory to physical 
    * memory.  For now, this is really simple (1:1), since we are
-   * only uniprogramming, and we have a single unsegmented page table
+   * only uniprogramming.
    *
    * @param executable The file containing the object code to 
    * 	load into memory
@@ -93,6 +93,7 @@ public class AddrSpace {
                                                 // to run anything too big --
 						// at least until we have
 						// virtual memory
+
 
     Debug.println('a', "Initializing address space, size=" + size);
 
