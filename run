@@ -1,0 +1,1 @@
+java -classpath machine.jar:. nachos.kernel.Nachos $*
