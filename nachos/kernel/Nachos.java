@@ -117,13 +117,12 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
    */
   public void run() {
     /*
-     * If we are going to be running user programs, then initialize
-     * the machine and register an exception handler.
+     * If we are going to be running user programs, then register
+     * register an exception handler.
      */
-    if(USER_PROGRAM) {
-	Machine.init(args);
+      if(USER_PROGRAM)
 	Machine.setHandler(new ExceptionHandler());
-    }
+
     /*
      * If we are going to be using the disk, then start the disk driver.
      */
@@ -180,6 +179,7 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
      * Nachos thread is started.
      */
     Debug.init(args);
+    Machine.init(args);
     Scheduler.init(args);
     /*
      * We are in the context of a Java thread, not a Nachos Thread.
