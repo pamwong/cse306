@@ -255,7 +255,8 @@ public class Scheduler {
 	  timer = null;
       }
       if(on)
-	timer = new Timer(new TimerInterruptHandler(), true);
+	timer = new Timer("random yield timer",
+			  new TimerInterruptHandler(), true);
   }
 
   /**
