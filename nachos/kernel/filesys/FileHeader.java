@@ -92,10 +92,10 @@ class FileHeader {
    * @param pos Position in the buffer at which to start.
    */
   private void internalize(byte[] buffer, int pos) {
-    numBytes = Disk.intInt(buffer, pos);
-    numSectors = Disk.intInt(buffer, pos+4);
+    numBytes = Disk.bytesToInt(buffer, pos);
+    numSectors = Disk.bytesToInt(buffer, pos+4);
     for (int i = 0; i < NumDirect; i++)
-      dataSectors[i] = Disk.intInt(buffer, pos+8+i*4);
+      dataSectors[i] = Disk.bytesToInt(buffer, pos+8+i*4);
   }
 
   /**
@@ -106,10 +106,10 @@ class FileHeader {
    * @param pos Position in the buffer at which to start.
    */
   private void externalize(byte[] buffer, int pos) {
-    Disk.extInt(numBytes, buffer, pos);
-    Disk.extInt(numSectors, buffer, pos+4);
+    Disk.intToBytes(numBytes, buffer, pos);
+    Disk.intToBytes(numSectors, buffer, pos+4);
     for (int i = 0; i < NumDirect; i++)
-      Disk.extInt(dataSectors[i], buffer, pos+8+i*4);
+      Disk.intToBytes(dataSectors[i], buffer, pos+8+i*4);
   }
 
   /**

@@ -158,7 +158,7 @@ public class BitMap {
     file.readAt(buffer, 0, numWords * 4, 0);
     // unmarshall
     for (int i = 0; i < numWords; i++)
-      map[i] = Disk.intInt(buffer, i*4);
+      map[i] = Disk.bytesToInt(buffer, i*4);
    }
 
   /**
@@ -170,7 +170,7 @@ public class BitMap {
     byte buffer[] = new byte[numWords*4];
     // marshall
     for (int i = 0; i < numWords; i++)
-      Disk.extInt(map[i], buffer, i*4);
+      Disk.intToBytes(map[i], buffer, i*4);
     // write bitmap
     file.writeAt(buffer, 0, numWords * 4, 0);
   }

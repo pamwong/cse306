@@ -135,8 +135,8 @@ class DirectoryEntry {
   void internalize(byte[] buffer, int pos) {
     if (buffer[pos] != 0) {
       inUse = true; 
-      sector = Disk.intInt(buffer, pos+1);
-      nameLen = Disk.intInt(buffer, pos+5);
+      sector = Disk.bytesToInt(buffer, pos+1);
+      nameLen = Disk.bytesToInt(buffer, pos+5);
       name = new String(buffer, pos+9, nameLen);
       nameBytes = name.getBytes();
     } else 
@@ -153,8 +153,8 @@ class DirectoryEntry {
   void externalize(byte[] buffer, int pos) {
     if (inUse) { 
       buffer[pos] = 1; 
-      Disk.extInt(sector, buffer, pos+1);
-      Disk.extInt(nameLen, buffer, pos+5);
+      Disk.intToBytes(sector, buffer, pos+1);
+      Disk.intToBytes(nameLen, buffer, pos+5);
       for(int i = 0; i < nameLen; i++)
 	  buffer[pos+9+i] = nameBytes[i];
     } else 
