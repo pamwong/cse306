@@ -21,10 +21,10 @@ cd doc
 MACHINE=
 
 # Uncomment the following if Windows is being used.
-#CLASSPATH=..\;../machine.jar
+CLASSPATH=..\;../machine.jar
 
 # Uncomment the following if Unix is being used.
-CLASSPATH=..:../machine.jar
+#CLASSPATH=..:../machine.jar
 
 javadoc	$MACHINE -classpath "$CLASSPATH" -sourcepath ".." \
 	-doctitle "Nachos-USB Kernel Documentation" \
