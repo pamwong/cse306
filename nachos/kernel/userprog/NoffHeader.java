@@ -31,10 +31,10 @@ class NoffSegment {
   static long convertWord(RandomAccessFile f) throws IOException {
     byte raw[] = new byte[4];
     f.read(raw);
-    return convertByte(raw[3]) |
-      (convertByte(raw[2]) << 8) | 
-      (convertByte(raw[1]) << 16) |
-      (convertByte(raw[0]) << 24);
+    return convertByte(raw[0]) |
+      (convertByte(raw[1]) << 8) | 
+      (convertByte(raw[2]) << 16) |
+      (convertByte(raw[3]) << 24);
   }
 
 }

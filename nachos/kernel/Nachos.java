@@ -58,8 +58,8 @@ class Nachos implements Runnable {
   // constants that control the Nachos configuration
 
   public static final boolean USER_PROGRAM = true;
-  public static final boolean FILESYS = true;
-  public static final boolean FILESYS_STUB = false;
+  public static final boolean FILESYS = false;
+  public static final boolean FILESYS_STUB = true;
   public static final boolean FILESYS_NEEDED = true;
   public static final boolean NETWORK = false;
   public static final boolean THREADS = true;

@@ -2,7 +2,7 @@
 
 for FILE in *.c
 do
-   TARGET=`/usr/ucb/basename $FILE .c`
-   echo "make $TARGET"
+   TARGET=`basename $FILE .c`
+   echo "gmake $TARGET"
    make $TARGET
 done
