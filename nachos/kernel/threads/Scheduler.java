@@ -85,8 +85,8 @@ public class Scheduler {
 
     Debug.println('t', "Switching to thread: " + nextThread.getName());
 
-    nextThread.switchTo(nextThread);
     currentThread = nextThread;
+    nextThread.switchTo(nextThread);
     Interrupt.setLevel(oldLevel);
 
     // nextThread is now running
