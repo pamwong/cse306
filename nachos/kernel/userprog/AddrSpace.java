@@ -20,7 +20,7 @@
 package nachos.kernel.userprog;
 
 import nachos.Debug;
-import nachos.machine.TranslationEntry;
+import nachos.machine.SegmentDescriptor;
 import nachos.machine.Machine;
 import nachos.kernel.filesys.OpenFile;
 
@@ -39,8 +39,17 @@ import nachos.kernel.filesys.OpenFile;
  */
 public class AddrSpace {
 
-  /** Page table that describes a virtual-to-physical address mapping. */
-  private TranslationEntry pageTable[];
+  /**
+   * Segment descriptor mapping the code and data portion of the
+   * virtual address space.
+   */
+  private SegmentDescriptor codeDescriptor = new SegmentDescriptor();
+
+  /**
+   * Segment descriptor mapping the stack portion of the
+   * virtual address space.
+   */
+  private SegmentDescriptor stackDescriptor = new SegmentDescriptor();
 
   /** Default size of the user stack area -- increase this as necessary! */
   private static final int UserStackSize = 1024;
@@ -72,36 +81,30 @@ public class AddrSpace {
     if((noffH = NoffHeader.readHeader(executable)) == null)
 	return(-1);
 
-    // how big is address space?
+    // First, how big is the address space?
     size = roundToPage(noffH.code.size)
-	     + roundToPage(noffH.initData.size + noffH.uninitData.size)
-	     + UserStackSize;	// we need to increase the size
-    				// to leave room for the stack
-    int numPages = (int)(size / Machine.PageSize);
+	   + roundToPage(noffH.initData.size + noffH.uninitData.size)
+	   + UserStackSize;   // we need to increase the size
+     			      // to leave room for the stack
 
-    Debug.ASSERT((numPages <= Machine.NumPhysPages),// check we're not trying
+    Debug.ASSERT(size <= Machine.MemorySize,
 		 "AddrSpace constructor: Not enough memory!");
+    	                                        // check we're not trying
                                                 // to run anything too big --
 						// at least until we have
 						// virtual memory
 
-    Debug.println('a', "Initializing address space, numPages=" 
-		+ numPages + ", size=" + size);
+    Debug.println('a', "Initializing address space, size=" + size);
 
-    // first, set up the translation 
-    pageTable = new TranslationEntry[numPages];
-    for (int i = 0; i < numPages; i++) {
-      pageTable[i] = new TranslationEntry();
-      pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-      pageTable[i].physicalPage = i;
-      pageTable[i].valid = true;
-      pageTable[i].use = false;
-      pageTable[i].dirty = false;
-      pageTable[i].readOnly = false;  // if the code segment was entirely on 
-				      // a separate page, we could set its 
-				      // pages to be read-only
-    }
-    
+    // Next, set up the segment descriptors for the memory-management hardware.
+    // We use segment 0 for code and data, and segment 1 for stack.
+    codeDescriptor.base = 0;
+    codeDescriptor.size = size - UserStackSize;
+    codeDescriptor.valid = true;
+    stackDescriptor.base = codeDescriptor.size;
+    stackDescriptor.size = UserStackSize;
+    stackDescriptor.valid = true;
+
     // Zero out the entire address space, to zero the unitialized data 
     // segment and the stack segment.
     for(int i = 0; i < size; i++)
@@ -109,9 +112,9 @@ public class AddrSpace {
 
     // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
-      Debug.println('a', "Initializing code segment, at " +
-	    noffH.code.virtualAddr + ", size " +
-	    noffH.code.size);
+      Debug.printf('a', "Initializing code segment, at 0x%x, size "
+		   + noffH.code.size + "\n",
+		   new Long(noffH.code.virtualAddr));
 
       executable.seek(noffH.code.inFileAddr);
       executable.read(Machine.mainMemory, (int)noffH.code.virtualAddr, 
@@ -119,9 +122,9 @@ public class AddrSpace {
     }
 
     if (noffH.initData.size > 0) {
-      Debug.println('a', "Initializing data segment, at " +
-	    noffH.initData.virtualAddr + ", size " +
-	    noffH.initData.size);
+      Debug.printf('a', "Initializing data segment, at 0x%x, size "
+		   + noffH.initData.size + "\n",
+		   new Long(noffH.initData.virtualAddr));
 
       executable.seek(noffH.initData.inFileAddr);
       executable.read(Machine.mainMemory, (int)noffH.initData.virtualAddr, 
@@ -151,13 +154,13 @@ public class AddrSpace {
     // of branch delay possibility
     Machine.writeRegister(Machine.NextPCReg, 4);
 
-    // Set the stack register to the end of the address space, where we
-    // allocated the stack; but subtract off a bit, to accomodate
-    // compiler convention that assumes space in the current frame to save
-    // four argument registers.
-    int sp = pageTable.length * Machine.PageSize - 16;
+    // Set the stack register to the end of the stack segment (segment 1);
+    // but subtract off a bit, to accomodate compiler convention that
+    // assumes space in the current frame to save four argument registers.
+    int sp = Machine.SegmentSize + UserStackSize - 16;
     Machine.writeRegister(Machine.StackReg, sp);
-    Debug.println('a', "Initializing stack register to " + sp);
+    Debug.printf('a', "Initializing stack register to 0x%x\n",
+		 new Integer(sp));
   }
 
   /**
@@ -172,10 +175,13 @@ public class AddrSpace {
    * On a context switch, restore any machine state specific
    * to this address space.
    *
-   * For now, just tell the machine where to find the page table.
+   * For now, just set the hardware segment descriptors appropriately
+   * for this address space.
    */
   public void restoreState() {
-    Machine.setPageTable(pageTable);
+    SegmentDescriptor[] segmentTable = Machine.getSegmentTable();
+    segmentTable[0] = codeDescriptor;
+    segmentTable[1] = stackDescriptor;
   }
 
   /**
