@@ -29,26 +29,8 @@ public class Statistics {
   // in the kernel measured by the number of calls to enable interrupts,
   // these time constants are none too exact.
   
-  /** Time taken to execute each user-level instruction. */
-  public static final int UserTick = 1;
-
-  /** Time advance each time interrupts are enabled. */
-  public static final int SystemTick =	10;
-
-  /** Time the disk takes to rotate one sector. */
-  public static final int RotationTime = 500;
-
-  /** Time disk takes to seek past one track. */
-  public static final int SeekTime = 500;
-
-  /** Time to read or write one character to the console. */
-  public static final int ConsoleTime = 100;
-
   /** Time to send or receive one packet on the network. */
   public static final int NetworkTime = 100;
-
-  /** (Average) time between timer interrupts. */
-  public static final int TimerTicks = 100;
 
   // instance variables
 
