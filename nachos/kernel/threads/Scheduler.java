@@ -263,7 +263,7 @@ public class Scheduler {
    *	The serviceDevice() method is called with interrupts disabled each
    *	time there is a timer interrupt.
    */
-  public static class TimerInterruptHandler extends InterruptHandler {
+  private static class TimerInterruptHandler extends InterruptHandler {
       public void serviceDevice() {
 	  // Note that instead of calling yield() directly (which would
 	  // suspend the interrupt handler, not the interrupted thread
