@@ -118,7 +118,7 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
   public void run() {
     /*
      * If we are going to be running user programs, then register
-     * register an exception handler.
+     * an exception handler.
      */
       if(USER_PROGRAM)
 	Machine.setHandler(new ExceptionHandler());
