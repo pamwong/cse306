@@ -37,8 +37,8 @@ public abstract class InterruptHandler
    */
   public void handleInterrupt() {
       inHandler = true;
-
       serviceDevice();
+      inHandler = false;
 
       if (yieldOnReturn) {	// if a device handler asked 
 				// for a context switch, ok to do it now
@@ -46,7 +46,6 @@ public abstract class InterruptHandler
 	  if(Scheduler.currentThread() != null)
 	      Scheduler.yield();
       }
-      inHandler = false;
   }
 
   /**
