@@ -181,7 +181,8 @@ public class AddrSpace {
   /**
    * Utility method for rounding up to a multiple of Machine.PageSize;
    */
-  private int roundToPage(int size) {
+  private long roundToPage(long size) {
+    size &= 0xffffffff;
     return(Machine.PageSize * ((size+(Machine.PageSize-1))/Machine.PageSize));
   }
 }
