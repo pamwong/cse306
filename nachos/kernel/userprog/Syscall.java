@@ -187,7 +187,7 @@ public class Syscall {
    * @param func The user address of the procedure to be run by the
    * new thread.
    */
-  public static void fork(long func) {}
+  public static void fork(int func) {}
 
   /**
    * Yield the CPU to another runnable thread, whether in this address space 
