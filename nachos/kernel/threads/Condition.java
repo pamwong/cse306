@@ -70,6 +70,15 @@ public class Condition {
   }
 
   /**
+   * Accessor to obtain the lock associated with a condition.
+   *
+   * @return the lock associated with this condition.
+   */
+  public Lock getLock() {
+      return(conditionLock);
+  }
+
+  /**
    * Wait on a condition until signalled.  The caller must hold the
    * lock associated with the condition.  The lock is released, and
    * the caller relinquishes the CPU until it is signalled by another
