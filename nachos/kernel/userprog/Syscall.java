@@ -150,7 +150,7 @@ public class Syscall {
    */
   public static void write(byte buffer[], int size, int id) {
     if (id == ConsoleOutput)
-      System.err.println(new String(buffer));
+      System.err.print(new String(buffer));
   }
 
   /**
