@@ -1,6 +1,9 @@
 #!bin/sh
 
+
 # Make a Postscript copy of the Nachos code, suitable for duplication
+
+COPYRIGHT=../COPYRIGHT
 
 README=README test/README
 
@@ -64,7 +67,7 @@ all: nachos.ps
 nachos.ps:
 	cd ../code; \
 	a2ps -o - -b --margin=24 --pretty-print \
-		${README} \
+		${COPYRIGHT} ${README} \
 		${MAKEFILES} ${INCLUDE} ${THREADS} ${USERPROG} ${FILESYS} \
 		${TEST} ${MACHINE} ${BIN} > ../print/nachos.ps
 
