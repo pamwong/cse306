@@ -19,9 +19,9 @@ javadoc:
 	makejavadoc
 
 cleanclass:
-	(find . -name "*.class" -print | xargs rm)
+	(find . -name "*.class" -print | xargs rm -f)
 
 cleanbackup:
-	(find . -name "*~" -print | xargs rm)
+	(find . -name "*~" -print | xargs rm -f)
 
 
