@@ -10,20 +10,18 @@
 # 	to ld, in order for the routine "Start" to be loaded at location 0
 #
 
-# Uncomment the following when running on Windows.
-JAVA= java -classpath '..\machine.jar'
-
-# Uncomment the following when running on Unix.
-#JAVA= java -classpath '../machine.jar'
-
-.SUFFIXES:
-
-NACHOSDIR=..
-INCDIR = $(NACHOSDIR)/test
-
 # Change the following to point to where you have the MIPS cross-compiler
 # installed.
 GCCDIR = /cse306/mips-gcc/
+
+# Change the following to point to where you have Java executables installed.
+JAVADIR = /usr/local/jdk/bin/
+
+# Uncomment the following when running on Windows.
+JAVA= $(JAVADIR)java -classpath '..\machine.jar'
+
+# Uncomment the following when running on Unix.
+#JAVA= $(JAVADIR)java -classpath '../machine.jar'
 
 CC = $(GCCDIR)gcc
 AS = $(GCCDIR)as
@@ -38,6 +36,11 @@ CPPFLAGS = -I$(INCDIR)
 
 CFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -fno-builtin
 SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S -fno-builtin
+
+NACHOSDIR=..
+INCDIR = $(NACHOSDIR)/test
+
+.SUFFIXES:
 
 all:
 
