@@ -28,7 +28,7 @@ class NoffHeader {
    * It permits the kernel to immediately reject files that are definitely
    * not executable.
    */
-  static final long noffMagic = 0xbadfad;
+  static final int noffMagic = 0xbadfad;
 
   /** Information about the executable code segment. */
   NoffSegment code;
@@ -69,7 +69,7 @@ class NoffHeader {
    * @return  The value of the four bytes when interpreted as an unsigned
    * integer.
    */
-  private static long convertWord(byte raw[]) {
+  private static int convertWord(byte raw[]) {
     return convertByte(raw[0]) |
       (convertByte(raw[1]) << 8) | 
       (convertByte(raw[2]) << 16) |
@@ -115,13 +115,13 @@ class NoffHeader {
    */
   static class NoffSegment {
       /** The location of segment in user virtual address space. */
-      long virtualAddr;
+      int virtualAddr;
 
       /** The location of the segment in the NOFF file. */
-      long inFileAddr;
+      int inFileAddr;
 
       /** The size of the segment in bytes. */
-      long size;
+      int size;
 
       /**
        * Private constructor, to force use of readSegment() to initialize
