@@ -119,27 +119,19 @@ class Scheduler {
       }
     }
 
-
     Debug.println('t', "Switching from thread: " + oldThread.getName() +
 		  " to thread: " + nextThread.getName());
 
-    // We do this in Java via wait/notify of the underlying Java threads.
+    nextThread.setStatus(NachosThread.RUNNING);
 
-    synchronized (nextThread) {
-      nextThread.setStatus(NachosThread.RUNNING);
-      nextThread.notify();
-    }
-    synchronized (oldThread) {
-      while (oldThread.getStatus() != NachosThread.RUNNING) 
-	try {oldThread.wait();} catch (InterruptedException e) {};
-    }
-    
+    oldThread.switchTo(nextThread);
+
     Debug.println('t', "Now in thread: " + NachosThread.thisThread().getName());
 
     // If the old thread gave up the processor because it was finishing,
     // we need to delete its carcass. 
     if (threadToBeDestroyed != null) {
-      threadToBeDestroyed.stop();
+      threadToBeDestroyed.setStatus(NachosThread.DESTROYED);
       threadToBeDestroyed = null;
     }
     
