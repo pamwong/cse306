@@ -24,6 +24,8 @@ AS = $(GCCDIR)as
 LD = $(GCCDIR)ld
 CPP = $(GCCDIR)cpp
 
+COFF2NOFF = $(GCCDIR)coff2noff
+
 LDFLAGS = -T script -N
 ASFLAGS = -mips1
 CPPFLAGS = -I$(INCDIR)
@@ -50,7 +52,7 @@ halt.o: halt.c
 halt: halt.o start.o
 	$(LD) $(LDFLAGS) start.o halt.o -o halt.coff
 	rm halt.o
-	$(GCCDIR)/coff2noff halt.coff halt
+	$(COFF2NOFF) halt.coff halt
 	rm halt.coff
 
 # If you are using gmake, the following rules should enable you to
@@ -65,5 +67,5 @@ halt: halt.o start.o
 %: %.o start.o
 	$(LD) $(LDFLAGS) start.o $< -o $*.coff
 	rm $*.o
-	$(GCCDIR)/coff2noff $*.coff $@
+	$(COFF2NOFF) $*.coff $@
 	rm $*.coff
