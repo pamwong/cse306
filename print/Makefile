@@ -3,53 +3,55 @@
 
 # Make a Postscript copy of the Nachos code, suitable for duplication
 
-COPYRIGHT=../COPYRIGHT
+COPYRIGHT=COPYRIGHT
 
 README=README test/README
 
-MAKEFILES=threads/Makefile test/Makefile bin/Makefile
+MAKEFILES=Makefile test/Makefile bin/Makefile
 
-THREADS=threads/AssertException.java\
-	threads/Condition.java\
-	threads/Debug.java\
-	threads/List.java\
-	threads/ListElement.java\
-	threads/ListTest.java\
-	threads/Lock.java\
-	threads/Nachos.java\
-	threads/NachosThread.java\
-	threads/Printable.java\
-	threads/Scheduler.java\
-	threads/Semaphore.java\
-	threads/SynchList.java\
-	threads/ThreadTest.java
-
-USERPROG=userprog/AddrSpace.java\
-	userprog/BitMap.java\
-	userprog/ConsoleTest.java\
-	userprog/NoffHeader.java\
-	userprog/ProgTest.java
+KERNEL=nachos/Debug.java\
+	nachos/Statistics.java\
+	nachos/kernel/kernel/Nachos/Kernel.java\
+	nachos/kernel/devices/DiskDriver.java\
+	nachos/kernel/devices/InterruptHandler.java\
+	nachos/kernel/devices/test/ConsoleTest.java\
+	nachos/kernel/filesys/Directory.java\
+	nachos/kernel/filesys/DirectoryEntry.java\
+	nachos/kernel/filesys/FileHeader.java\
+	nachos/kernel/filesys/FileSystem.java\
+	nachos/kernel/filesys/FileSystemReal.java\
+	nachos/kernel/filesys/FileSystemStub.java\
+	nachos/kernel/filesys/OpenFile.java\
+	nachos/kernel/filesys/OpenFileReal.java\
+	nachos/kernel/filesys/OpenFileStub.java\
+	nachos/kernel/filesys/test/FileSystemTest.java\
+	nachos/kernel/threads/Condition.java\
+	nachos/kernel/threads/List.java\
+	nachos/kernel/threads/Lock.java\
+	nachos/kernel/threads/Scheduler.java\
+	nachos/kernel/threads/Semaphore.java\
+	nachos/kernel/threads/SynchList.java\
+	nachos/kernel/threads/test/AlarmTest.java\
+	nachos/kernel/threads/test/ThreadTest.java\
+	nachos/kernel/userprog/AddrSpace.java\
+	nachos/kernel/userprog/ExceptionHandler.java\
+	nachos/kernel/userprog/NoffHeader.java\
+	nachos/kernel/userprog/Syscall.java\
+	nachos/kernel/userprog/UserThread.java\
+	nachos/kernel/userprog/test/ProgTest.java\
 
 MACHINE=machine/Console.java\
 	machine/Disk.java\
+	machine/ExceptionHandler.java\
+	machine/GUIConsole.java\
 	machine/Interrupt.java\
+	machine/InterruptHandler.java\
 	machine/Machine.java\
+	machine/NachosThread.java\
 	machine/PendingInterrupt.java\
-	machine/Statistics.java\
+	machine/StreamConsole.java\
 	machine/Timer.java\
 	machine/TranslationEntry.java
-
-FILESYS=filesys/Directory.java\
-	filesys/DirectoryEntry.java\
-	filesys/FileHeader.java\
-	filesys/FileSystem.java\
-	filesys/FileSystemReal.java\
-	filesys/FileSystemStub.java\
-	filesys/FileSystemTest.java\
-	filesys/OpenFile.java\
-	filesys/OpenFileReal.java\
-	filesys/OpenFileStub.java\
-	filesys/SynchDisk.java
 
 INCLUDE=include/copyright.h\
 	include/syscall.h
@@ -65,11 +67,10 @@ BIN=bin/coff.h bin/noff.h bin/coff2noff.c
 all: nachos.ps
 
 nachos.ps:
-	cd ../code; \
+	cd ..; \
 	a2ps -o - -b --margin=24 --pretty-print \
-		${COPYRIGHT} ${README} \
-		${MAKEFILES} ${INCLUDE} ${THREADS} ${USERPROG} ${FILESYS} \
-		${TEST} ${MACHINE} ${BIN} > ../print/nachos.ps
+		${COPYRIGHT} ${README} ${MAKEFILES} \
+		${INCLUDE} ${KERNEL} ${TEST} > print/nachos.ps
 
 clean:
 	rm -f *~ \#* *.ps
