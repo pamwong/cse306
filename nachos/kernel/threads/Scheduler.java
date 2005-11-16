@@ -229,7 +229,7 @@ public class Scheduler {
     // This ensures that there is at most one dead thread ever waiting
     // to be cleaned up.
     if (threadToBeDestroyed != null)
-	threadToBeDestroyed.setStatus(NachosThread.DESTROYED);
+	threadToBeDestroyed.setStatus(NachosThread.TERMINATED);
 
     Debug.print('t', "Finishing thread: " + currentThread.name +"\n");
 
