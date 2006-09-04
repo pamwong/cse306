@@ -91,13 +91,18 @@ public class ConsoleTest {
   }
 
   /**
-   * Entry point for the Console test.
+   * Entry point for the Console test.  If "-c" is included in the
+   * command-line arguments, then run the console test; otherwise, do
+   * nothing.  If "-c" is followed by two more arguments, then they are
+   * interpreted as the names of files from which to read the console
+   * input and to which to direct the console output, respectively;
+   * otherwise, input is read from the keyboard, and output is directed
+   * to the display.
    *
-   * @param args  Command-line arguments.  If "-c" is given, then
-   * the next two arguments are the names of files from which to read
-   * the console input and to which to direct the console output.
-   * If "-c" is not given, then input is from the keyboard and output
-   * is to the display.
+   * The console test reads characters from the input and echoes them
+   * onto the output.  The test ends when a 'q' is read.
+   *
+   * @param args  Command-line arguments.
    */
   public static void start(String[] args) {
       for (int i=0; i<args.length; i++) {

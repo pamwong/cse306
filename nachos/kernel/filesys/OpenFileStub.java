@@ -11,6 +11,7 @@
 package nachos.kernel.filesys;
 
 import java.io.*;
+import nachos.kernel.threads.Scheduler;
 
 /**
  * This "stub" class implements file operations for Nachos by simply
@@ -20,6 +21,15 @@ import java.io.*;
  * before the file system assignment.
  */
 class OpenFileStub implements OpenFile {
+
+  /**
+   * Do file operations cause the calling thread to block waiting for
+   * the operation to complete?  Blocking is simulated by calling
+   * Scheduler.yield; more realistically, the thread would wait for an
+   * interrupt to inform it that the operation is complete.
+   */
+  private static final boolean BLOCKING_FILESYS = true;
+
   /** The underlying file on the host platform. */
   private RandomAccessFile file;
 
@@ -61,6 +71,7 @@ class OpenFileStub implements OpenFile {
   public int readAt(byte into[], int index, int numBytes, long position) { 
     int len;
 
+    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
     try {
       file.seek(position);
       len = file.read(into, index, numBytes);
@@ -80,6 +91,7 @@ class OpenFileStub implements OpenFile {
    * @return The number of bytes actually written (0 in case of an error).
    */
   public int writeAt(byte from[], int index, int numBytes, long position) { 
+    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
     try {
       file.seek(position);
       file.write(from, index, numBytes);

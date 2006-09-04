@@ -11,6 +11,7 @@
 package nachos.kernel.filesys;
 
 import java.io.*;
+import nachos.kernel.threads.Scheduler;
 
 /**
  * This "filesystem stub" class implements a Nachos filesystem by simply
@@ -20,11 +21,22 @@ import java.io.*;
  * before the file system assignment.
  */
 class FileSystemStub extends FileSystem {
+
+  /**
+   * Do filesystem operations cause the calling thread to block waiting
+   * for the operation to complete?  Blocking is simulated by calling
+   * Scheduler.yield; more realistically, the thread would wait for an
+   * interrupt to inform it that the operation is complete.
+   */
+  private static final boolean BLOCKING_FILESYS = true;
+
   /**
    * Constructor is protected so that all creations are funneled through
    * the init() factory method of the super class.
    */
-  protected FileSystemStub() { super(); }
+  protected FileSystemStub() { 
+    super(); 
+  }
 
   /**
    * Create a new file with a specified name and size.
@@ -36,6 +48,7 @@ class FileSystemStub extends FileSystem {
   public boolean create(String name, long initialSize) { 
     FileOutputStream fsFile;
 
+    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
     try {
       fsFile = new FileOutputStream(name);
       fsFile.close();    
@@ -57,6 +70,7 @@ class FileSystemStub extends FileSystem {
   public OpenFile open(String name) {
     RandomAccessFile file;
 
+    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
     if (!new File(name).exists())
 	return null;
     try {
@@ -78,6 +92,7 @@ class FileSystemStub extends FileSystem {
   public boolean remove(String name) { 
     File file;
 
+    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
     file = new File(name);
     return file.delete();
   }

@@ -95,8 +95,8 @@ class OpenFileReal implements OpenFile {
    * @param numBytes The number of bytes to transfer.
    * @return The number of bytes actually written (0 if error).
    */
-  public int write(byte[] into, int index, int numBytes) {
-    int result = writeAt(into, index, numBytes, seekPosition);
+  public int write(byte[] from, int index, int numBytes) {
+    int result = writeAt(from, index, numBytes, seekPosition);
     seekPosition += result;
     return result;
   }
