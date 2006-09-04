@@ -1,36 +1,39 @@
 // Nachos.java
 //	Bootstrap code to initialize the operating system kernel.
 //
-// Usage: nachos -d <debugflags> -rs <random seed #>
-//		-s -x <nachos file> -c <consoleIn> <consoleOut>
-//		-f -cp <unix file> <nachos file>
-//		-p <nachos file> -r <nachos file> -l -D -t
-//              -n <network reliability> -m <machine id>
-//              -o <other machine id>
-//              -z
+// Usage: 
+// run <options> ("run" is a simple script; edit it for your platform), or:
+// on Windows: java -classpath 'machine.jar;.' nachos.kernel.Nachos <options>
+// on Unix:    java -classpath 'machine.jar:.' nachos.kernel.Nachos <options>
+// where <options> are:
 //
-//    -d causes certain debugging messages to be printed (cf. utility.h)
-//    -rs causes Yield to occur at random (but repeatable) spots
+//  GENERAL
+//    -d <flags> causes debugging messages to be printed (see Debug.java)
+//    -rs <seed> causes yield to occur at pseudo-random points during
+//         execution.  <seed> is the seed to a pseudo-random number generator.
+//         Re-execution with the same seed should produce the same results.
+//    -tl <time limit> halt the machine if totalTicks exceeds <time limit>
 //    -z prints the copyright message
 //
-//  USER_PROGRAM
+//  USER_PROGRAM (set USER_PROGRAM=true below before using these options!)
 //    -s causes user programs to be executed in single-step mode
-//    -x runs a user program
-//    -c tests the console
+//    -x <nachos file> runs a user program
+//    -c <consoleIn> <consoleOut> tests the console
+//         if omitted, consoleIn and consoleOut default to stdin and stdout
 //
-//  FILESYS
+//  FILESYS (set FILESYS=true below before using these options!)
 //    -f causes the physical disk to be formatted
-//    -cp copies a file from UNIX to Nachos
-//    -p prints a Nachos file to stdout
-//    -r removes a Nachos file from the file system
+//    -cp <unix file> <nachos file> copies a file from UNIX to Nachos
+//    -p <nachos file> prints a Nachos file to stdout
+//    -r <nachos file> removes a Nachos file from the file system
 //    -l lists the contents of the Nachos directory
 //    -D prints the contents of the entire file system 
 //    -t tests the performance of the Nachos file system
 //
-//  NETWORK
-//    -n sets the network reliability
-//    -m sets this machine's host id (needed for the network)
-//    -o runs a simple test of the Nachos network software
+//  NETWORK (set NETWORK=true below before using these options!)
+//    -n <reliability>  sets the network reliability -- currently unsupported
+//    -m <machine id> sets this machine's host id; id's start at 0.
+//    -nt <numMach> tests the network, assuming <numMach> machines
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
@@ -50,7 +53,9 @@ import nachos.kernel.threads.test.AlarmTest;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.filesys.test.FileSystemTest;
 import nachos.kernel.devices.DiskDriver;
+import nachos.kernel.devices.NetworkDriver;
 import nachos.kernel.devices.test.ConsoleTest;
+import nachos.kernel.devices.test.NetworkTest;
 import nachos.kernel.userprog.test.ProgTest;
 import nachos.kernel.userprog.ExceptionHandler;
 
@@ -90,13 +95,13 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
    */
   private static final boolean FILESYS_STUB = true;
 
-  /** Are we going to be using the network (NOTE: doesn't exist yet). */
+  /** Are we going to be using the network? */
   private static final boolean NETWORK = false;
 
   /** Are we going to be using the threads system? */
   private static final boolean THREADS = true;
 
-  /** References to the command-line arguments passed to main(). */
+  /** Array containing the command-line arguments passed to main(). */
   private static String args[];
 
   /** Access to the Nachos file system. */
@@ -104,6 +109,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
 
   /** Access to the Nachos disk driver. */
   public static DiskDriver diskDriver;
+
+  /** Access to the Nachos network. */
+  public static NetworkDriver networkDriver;
 
   /**
    * 	Nachos initialization -- performed by first Nachos thread.
@@ -130,6 +138,14 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
 	diskDriver = new DiskDriver("DISK");
 
     /*
+     * If we are going to be using the network, then start the network driver.
+     */
+    if(NETWORK) {
+      networkDriver = new NetworkDriver(args);
+      NetworkTest.start(args);
+    }
+
+    /*
      * If we are going to be using the filesystem, then initialize it.
      */
     if(FILESYS) {
@@ -146,8 +162,8 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
     }
 
     if (USER_PROGRAM) {
-	ProgTest.start(args);
-	ConsoleTest.start(args);
+      ProgTest.start(args);
+      ConsoleTest.start(args);
     }
 
     if(FILESYS && !FILESYS_STUB)
@@ -169,10 +185,10 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
     Debug.println('t', "Entering main");
 
     args = clArgs;
-    for (int i=0; i<args.length; i++) {
-      if (args[i].equals("-z"))
+
+    if (java.util.Arrays.asList(args).contains("-z"))
 	System.out.println(copyright);
-    }
+
     /*
      * Here we do just that initialization that has to be done in order
      * to start the thread scheduler.  The rest gets done once the first
