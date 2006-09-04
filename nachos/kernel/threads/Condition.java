@@ -88,7 +88,7 @@ public class Condition {
     Debug.ASSERT(conditionLock.isHeldByCurrentThread(),
 		 "Non-owner tried to manipulate condition variable.");
     Debug.printf('s', "Thread %s waiting on condition variable %s\n",
-		 Scheduler.currentThread().name, name);
+		 Scheduler.currentThread().getName(), name);
 
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     conditionLock.release();
@@ -98,13 +98,13 @@ public class Condition {
 
     Debug.printf('s', "Trying to reacquire condition %s's lock (%s) for " +
 		 "thread %s\n", name, conditionLock.name,
-		 Scheduler.currentThread().name);
+		 Scheduler.currentThread().getName());
 
     conditionLock.acquire();
 
     Debug.printf('s', "Reacquired condition %s's lock (%s) for " +
 		 "thread %s\n", name, conditionLock.name,
-		 Scheduler.currentThread().name);
+		 Scheduler.currentThread().getName());
   }
 
   /**
@@ -118,7 +118,7 @@ public class Condition {
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     NachosThread newThread = (NachosThread)(waitingThreads.remove());
     if (newThread != null) {
-      Debug.printf('s', "Waking up thread %s\n", newThread.name);
+      Debug.printf('s', "Waking up thread %s\n", newThread.getName());
       Scheduler.readyToRun(newThread);
     }
     Interrupt.setLevel(oldLevel);
@@ -135,7 +135,7 @@ public class Condition {
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     NachosThread newThread = (NachosThread)(waitingThreads.remove());
     while (newThread != null) {
-      Debug.printf('s', "Waking thread %s\n", newThread.name);
+      Debug.printf('s', "Waking thread %s\n", newThread.getName());
       Scheduler.readyToRun(newThread);
       newThread = (NachosThread)(waitingThreads.remove());
     }

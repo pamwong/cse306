@@ -70,8 +70,8 @@ public class Syscall {
   /**
    * This user program is done.
    *
-   * @status Status code to pass to someone doing a Join().
-   * Status = 0 means the program exited normally.
+   * @param status Status code to pass to processes doing a Join().
+   * status = 0 means the program exited normally.
    */
   public static void exit(int status) {
     Debug.println('+', "User program exits with status=" + status);

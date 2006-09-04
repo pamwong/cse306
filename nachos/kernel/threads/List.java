@@ -37,7 +37,7 @@ public class List {
    * Initialize a list, empty to start with.
    * Elements can then be added to the list.
    */
-  public void List() { 
+  public List() { 
     first = last = null; 
   }
 

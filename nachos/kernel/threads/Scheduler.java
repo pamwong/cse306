@@ -82,7 +82,7 @@ public class Scheduler {
       return;
     }
 
-    Debug.println('t', "Switching to thread: " + nextThread.name);
+    Debug.println('t', "Switching to thread: " + nextThread.getName());
 
     currentThread = nextThread;
     nextThread.switchTo(nextThread);
@@ -97,7 +97,7 @@ public class Scheduler {
    * @param thread The thread to be put on the ready list.
    */
   public static void readyToRun(NachosThread thread) {
-    Debug.print('t', "Putting thread on ready list: " + thread.name + "\n");
+    Debug.print('t', "Putting thread on ready list: " + thread.getName() + "\n");
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     thread.setStatus(NachosThread.READY);
     readyList.append(thread);
@@ -135,14 +135,14 @@ public class Scheduler {
     currentThread.saveState();  // save the user's CPU registers and
     				// address space, if any.
     
-    Debug.println('t', "Switching from thread: " + currentThread.name +
-		  " to thread: " + nextThread.name);
+    Debug.println('t', "Switching from thread: " + currentThread.getName() +
+		  " to thread: " + nextThread.getName());
 
     NachosThread oldThread = currentThread;
     currentThread = nextThread;
     oldThread.switchTo(nextThread);
 
-    Debug.println('t', "Now in thread: " + currentThread.name);
+    Debug.println('t', "Now in thread: " + currentThread.getName());
 
     currentThread.restoreState();   // restore user's CPU registers and
     				    // address space, if any.
@@ -169,7 +169,7 @@ public class Scheduler {
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     Debug.ASSERT(currentThread != null);
     
-    Debug.println('t', "Yielding thread: " + currentThread.name);
+    Debug.println('t', "Yielding thread: " + currentThread.getName());
     
     nextThread = Scheduler.findNextToRun();
     if (nextThread != null) {
@@ -203,7 +203,7 @@ public class Scheduler {
     
     Debug.ASSERT(Interrupt.getLevel() == Interrupt.IntOff);
     
-    Debug.println('t', "Sleeping thread: " + currentThread.name);
+    Debug.println('t', "Sleeping thread: " + currentThread.getName());
 
     currentThread.setStatus(NachosThread.BLOCKED);
     thisThread = currentThread;
@@ -231,7 +231,7 @@ public class Scheduler {
     if (threadToBeDestroyed != null)
 	threadToBeDestroyed.setStatus(NachosThread.TERMINATED);
 
-    Debug.print('t', "Finishing thread: " + currentThread.name +"\n");
+    Debug.print('t', "Finishing thread: " + currentThread.getName() +"\n");
 
     threadToBeDestroyed = currentThread;
     sleep();				

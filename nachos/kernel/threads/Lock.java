@@ -34,7 +34,7 @@ public class Lock {
   private Semaphore sem;
 
   /** Which thread currently holds this lock? */
-  private NachosThread owner;
+  private volatile NachosThread owner;
 
   /**
    * Initialize a lock.
@@ -53,13 +53,13 @@ public class Lock {
   public void acquire() {
 
     Debug.printf('s', "Acquiring lock %s for thread %s\n",
-		 name, Scheduler.currentThread().name);
+		 name, Scheduler.currentThread().getName());
 
     sem.P();
     owner = Scheduler.currentThread();
 
     Debug.printf('s', "Acquired lock %s for thread %s\n",
-		 name, Scheduler.currentThread().name);
+		 name, Scheduler.currentThread().getName());
   }
 
   /**
@@ -72,13 +72,13 @@ public class Lock {
 		 "A thread which doesn't own the lock tried to " +
 		 "release it!\n");
     Debug.printf('s', "Thread %s dropping lock %s\n",
-		 Scheduler.currentThread().name, name);
+		 Scheduler.currentThread().getName(), name);
 
     owner = null;
     sem.V();
 
     Debug.printf('s', "Thread %s dropped lock %s\n",
-		 Scheduler.currentThread().name, name);
+		 Scheduler.currentThread().getName(), name);
   }
 
   /**
