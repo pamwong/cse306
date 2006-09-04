@@ -32,16 +32,27 @@ javadoc:
 	makejavadoc
 
 cleanclass:
-	(find . -name "*.class" -print | xargs rm -f)
+	rm -f *.class */*.class */*/*.class */*/*/*.class */*/*/*/*.class 
 
 cleanbackup:
-	(find . -name "*~" -print | xargs rm -f)
+	rm -f *~ */*~ */*/*~ */*/*/*~ */*/*/*/*~
+
+# The following definitions are more general, but they work on Windows
+# only if the directory containing cygwin's find.exe precedes the directory
+# containing Windows's find.exe in PATH.
+#cleanclass:
+#	(find . -name "*.class" -print | xargs rm -f)
+#
+#cleanbackup:
+#	(find . -name "*~" -print | xargs rm -f)
 
 KERNEL_CLASSES=\
 	nachos/kernel/Nachos.class \
 	nachos/kernel/devices/DiskDriver.class \
 	nachos/kernel/devices/InterruptHandler.class \
+	nachos/kernel/devices/NetworkDriver.class \
 	nachos/kernel/devices/test/ConsoleTest.class \
+	nachos/kernel/devices/test/NetworkTest.class \
 	nachos/kernel/filesys/BitMap.class \
 	nachos/kernel/filesys/Directory.class \
 	nachos/kernel/filesys/DirectoryEntry.class \
@@ -96,11 +107,17 @@ nachos/kernel/userprog/AddrSpace.class: $(MACHINE) nachos/kernel/userprog/AddrSp
 nachos/kernel/devices/test/ConsoleTest.class: $(MACHINE) nachos/kernel/devices/test/ConsoleTest.java
 	${JC} nachos/kernel/devices/test/ConsoleTest.java
 
+nachos/kernel/devices/test/NetworkTest.class: $(MACHINE) nachos/kernel/devices/test/NetworkTest.java
+	${JC} nachos/kernel/devices/test/NetworkTest.java
+
 nachos/kernel/devices/InterruptHandler.class: $(MACHINE) nachos/kernel/devices/InterruptHandler.java
 	${JC} nachos/kernel/devices/InterruptHandler.java
 
 nachos/kernel/devices/DiskDriver.class: $(MACHINE) nachos/kernel/devices/DiskDriver.java
 	${JC} nachos/kernel/devices/DiskDriver.java
+
+nachos/kernel/devices/NetworkDriver.class: $(MACHINE) nachos/kernel/devices/NetworkDriver.java
+	${JC} nachos/kernel/devices/NetworkDriver.java
 
 nachos/kernel/filesys/test/FileSystemTest.class: $(MACHINE) nachos/kernel/filesys/test/FileSystemTest.java
 	${JC} nachos/kernel/filesys/test/FileSystemTest.java

@@ -8,15 +8,15 @@ CLASSPATH=.\;machine.jar
 
 # Build "external" documentation for the machine package.
 javadoc -d doc/machine \
-	-doctitle "Nachos-USB Machine Documentation" \
-	-windowtitle "Nachos-USB Machine Documentation" \
+	-doctitle "Nachos-SBU Machine Documentation" \
+	-windowtitle "Nachos-SBU Machine Documentation" \
 	-sourcepath "." -classpath "." \
 	nachos.machine
 
 # Build "internal" documentation for everything but the machine package.
 javadoc	-d doc/kernel $MACHINE -classpath $CLASSPATH -sourcepath "." \
-	-doctitle "Nachos-USB Kernel Documentation" \
-	-windowtitle "Nachos-USB Kernel Documentation" \
+	-doctitle "Nachos-SBU Kernel Documentation" \
+	-windowtitle "Nachos-SBU Kernel Documentation" \
 	-private \
         nachos \
 	nachos.kernel \
