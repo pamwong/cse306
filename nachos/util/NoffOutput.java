@@ -46,7 +46,7 @@ class NoffOutput {
     private OutputStream out;
 
 
-    public NoffOutput(File outFile) throws FileNotFoundException {
+    public NoffOutput(File outFile) throws FileNotFoundException, IOException {
 	this.out = new FileOutputStream(outFile);
 	code = new Segment();
 	initData = new Segment();
