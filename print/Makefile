@@ -13,7 +13,9 @@ KERNEL=\
 	nachos/kernel/Nachos.java\
 	nachos/kernel/devices/DiskDriver.java\
 	nachos/kernel/devices/InterruptHandler.java\
+	nachos/kernel/devices/NetworkDriver.java\
 	nachos/kernel/devices/test/ConsoleTest.java\
+	nachos/kernel/devices/test/NetworkTest.java\
 	nachos/kernel/filesys/BitMap.java\
 	nachos/kernel/filesys/Directory.java\
 	nachos/kernel/filesys/DirectoryEntry.java\
@@ -50,19 +52,22 @@ MACHINE=machine/Console.java\
 	machine/InterruptHandler.java\
 	machine/Machine.java\
 	machine/NachosThread.java\
+	machine/Network.java\
+	machine/Packet.java\
+	machine/RK05Disk.java\
 	machine/PendingInterrupt.java\
 	machine/SegmentDescriptor.java\
 	machine/StreamConsole.java\
 	machine/Timer.java\
 	machine/TranslationEntry.java
 
-TEST=   include/copyright.h\
-	include/syscall.h\
+TEST=   test/copyright.h\
 	test/halt.c\
 	test/matmult.c\
 	test/shell.c\
 	test/sort.c\
-	test/start.s
+	test/start.s\
+	test/syscall.h
 
 BIN=bin/coff.h bin/noff.h bin/coff2noff.c
 
