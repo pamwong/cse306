@@ -5,9 +5,9 @@
 
 COPYRIGHT=COPYRIGHT
 
-README=README.stark README.druschel test/README
+README=README.stoller README.stark README.druschel test/README
 
-MAKEFILES=Makefile test/Makefile bin/Makefile
+MAKEFILES=Makefile test/Makefile
 
 KERNEL=\
 	nachos/kernel/Nachos.java\
