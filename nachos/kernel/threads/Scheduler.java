@@ -69,17 +69,18 @@ public class Scheduler {
   /**
    * Called by a Java thread (usually the initial thread that calls 
    * Nachos.main) to start the first Nachos thread.
-   * Interrupts are assumed to be off when this method is called.
    */
   public static void start() {
     NachosThread nextThread;
 
     Debug.println('t', "Scheduling first Nachos thread");
 
+    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     nextThread = findNextToRun();
     if (nextThread == null) {
-      Debug.print('+', "Scheduler.start(): no NachosThread ready!");
-      return;
+	Interrupt.setLevel(oldLevel);
+	Debug.print('+', "Scheduler.start(): no NachosThread ready!");
+	return;
     }
 
     Debug.println('t', "Switching to thread: " + nextThread.getName());
@@ -97,7 +98,8 @@ public class Scheduler {
    * @param thread The thread to be put on the ready list.
    */
   public static void readyToRun(NachosThread thread) {
-    Debug.print('t', "Putting thread on ready list: " + thread.getName() + "\n");
+    Debug.print
+	('t', "Putting thread on ready list: " + thread.getName() + "\n");
     int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
     thread.setStatus(NachosThread.READY);
     readyList.append(thread);
@@ -228,12 +230,13 @@ public class Scheduler {
     // Delete the carcass of any thread that died previously.
     // This ensures that there is at most one dead thread ever waiting
     // to be cleaned up.
-    if (threadToBeDestroyed != null)
+    if (threadToBeDestroyed != null) {
 	threadToBeDestroyed.setStatus(NachosThread.TERMINATED);
+	threadToBeDestroyed = null;
+    }
+    threadToBeDestroyed = currentThread;
 
     Debug.print('t', "Finishing thread: " + currentThread.getName() +"\n");
-
-    threadToBeDestroyed = currentThread;
     sleep();				
     // not reached
   }
