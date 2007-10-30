@@ -52,6 +52,7 @@ import nachos.kernel.threads.test.ThreadTest;
 import nachos.kernel.threads.test.AlarmTest;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.filesys.test.FileSystemTest;
+import nachos.kernel.devices.ConsoleDriver;
 import nachos.kernel.devices.DiskDriver;
 import nachos.kernel.devices.NetworkDriver;
 import nachos.kernel.devices.test.ConsoleTest;
@@ -73,6 +74,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
    * It is not clear that they all do something useful in the current
    * version.
    */
+
+  /** Should we use the GUI console, or the stream-based version? */
+  private static final boolean GUI_CONSOLE = false;
 
   /** Are we going to be running user programs? */
   private static final boolean USER_PROGRAM = true;
@@ -107,6 +111,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
   /** Access to the Nachos file system. */
   public static FileSystem fileSystem;
 
+  /** Access to the Nachos console. */
+  public static ConsoleDriver consoleDriver;
+
   /** Access to the Nachos disk driver. */
   public static DiskDriver diskDriver;
 
@@ -130,6 +137,11 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
      */
       if(USER_PROGRAM)
 	Machine.setHandler(new ExceptionHandler());
+
+    /*
+     * Initialize the console driver.
+     */
+    consoleDriver = new ConsoleDriver(GUI_CONSOLE);
 
     /*
      * If we are going to be using the disk, then start the disk driver.

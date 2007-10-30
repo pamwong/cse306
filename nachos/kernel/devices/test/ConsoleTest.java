@@ -10,27 +10,16 @@
 package nachos.kernel.devices.test;
 
 import nachos.Debug;
-import nachos.machine.Console;
-import nachos.kernel.threads.Scheduler;
-import nachos.kernel.threads.Semaphore;
-import nachos.kernel.devices.InterruptHandler;
+import nachos.kernel.Nachos;
+import nachos.kernel.devices.ConsoleDriver;
 
 /**
  * Class for testing the Console hardware device.
  */
 public class ConsoleTest {
 
-  // Objects needed for the console test.  Threads making
-  // I/O requests wait on a Semaphore to delay until the I/O completes.
-
-  /** Instance of the console device being tested. */
-  private static Console console;
-
-  /** Semaphore used to wait for available input. */
-  private static Semaphore readAvail;
-
-  /** Semaphore used to wait until printing is done. */
-  private static Semaphore writeDone;
+  /** Reference to the console device driver. */
+  private static ConsoleDriver console;
 
   /**
    * Test the console by echoing characters typed at the input onto
@@ -46,39 +35,9 @@ public class ConsoleTest {
 
     Debug.println('c', "ConsoleTest: starting");
 
-    // Interrupt-driven mode
-    readAvail = new Semaphore("read avail", 0);
-    writeDone = new Semaphore("write done", 0);
-    console = Console.streamConsole(in, out, new ConsHandler(readAvail), 
-    				    new ConsHandler(writeDone));
-    //console = Console.guiConsole(new ConsHandler(readAvail),
-    //				 new ConsHandler(writeDone));
-
+    console = Nachos.consoleDriver;
     while (true) {
-      readAvail.P();		// wait for character to arrive
       ch = console.getChar();
-
-      console.putChar(ch);	// echo it!
-      writeDone.P();            // wait for write to finish
-
-      if (ch == 'q') {
-	  Debug.println('c', "ConsoleTest: quitting");
-	  console.stop();
-	  return;    // if q, quit
-      }
-    }
-
-    /*
-    // PIO mode -- no interrupt handlers
-    console = Console.streamConsole(in, out);
-    //console = Console.guiConsole();
-    while (true) {
-      while(!console.isInputAvail())
-	  Scheduler.yield();    // wait for character to arrive
-      ch = console.getChar();
-
-      while(console.isOutputBusy())
-	  Scheduler.yield();    // wait for previous write to finish
       console.putChar(ch);	// echo it!
 
       if (ch == 'q') {
@@ -87,7 +46,6 @@ public class ConsoleTest {
 	  return;    // if q, quit
       }
     }
-    */
   }
 
   /**
@@ -117,33 +75,6 @@ public class ConsoleTest {
 	      // Nachos will loop forever waiting 
 	      // for console input
 	  }
-      }
-  }
-
-  /**
-   * Console interrupt handler class.
-   */
-  private static class ConsHandler extends InterruptHandler {
-      /** Semaphore used to awaken requesting thread. */
-      private Semaphore semaphore;
-
-      /**
-       * Initialize a handler with a given semaphore to use to
-       * wake up the requesting thread when the I/O is complete.
-       *
-       * @param s The semaphore to use to wake up the requesting thread.
-       */
-      public ConsHandler(Semaphore s) {
-	  semaphore = s;
-      }
-
-      /**
-       * To service a Console interrupt, just wake up the thread that
-       * requested the I/O.
-       */
-      public void serviceDevice() {
-	  //Debug.println('c', "ConsoleTest: " + semaphore.name);
-	  semaphore.V();
       }
   }
 }
