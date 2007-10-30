@@ -24,13 +24,8 @@ public class ConsoleTest {
   /**
    * Test the console by echoing characters typed at the input onto
    * the output.  Stop when the user types a 'q'.
-   *
-   * @param in  If non-null, the name of a file from which to read
-   * input.  If null, then read input from the keyboard.
-   * @param out If non-null, the name of a file to which to direct
-   * output.  If null, then direct output to the display.
    */
-  public static void run(String in, String out) {
+  public static void run() {
     char ch;
 
     Debug.println('c', "ConsoleTest: starting");
@@ -61,7 +56,7 @@ public class ConsoleTest {
   public static void start(String[] args) {
       for (int i=0; i<args.length; i++) {
 	  if (args[i].equals("-c")) {          // test the console
-	      ConsoleTest.run(null, null);
+	      ConsoleTest.run();
 	      // once we start the console, then 
 	      // Nachos will loop forever waiting 
 	      // for console input
