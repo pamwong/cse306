@@ -51,11 +51,7 @@ public class ConsoleTest {
   /**
    * Entry point for the Console test.  If "-c" is included in the
    * command-line arguments, then run the console test; otherwise, do
-   * nothing.  If "-c" is followed by two more arguments, then they are
-   * interpreted as the names of files from which to read the console
-   * input and to which to direct the console output, respectively;
-   * otherwise, input is read from the keyboard, and output is directed
-   * to the display.
+   * nothing.
    *
    * The console test reads characters from the input and echoes them
    * onto the output.  The test ends when a 'q' is read.
@@ -65,12 +61,7 @@ public class ConsoleTest {
   public static void start(String[] args) {
       for (int i=0; i<args.length; i++) {
 	  if (args[i].equals("-c")) {          // test the console
-	      if (i < args.length-2) {
-		  ConsoleTest.run(args[i+1],args[i+2]);
-		  i += 2;
-	      } else {
-		  ConsoleTest.run(null, null);
-	      }
+	      ConsoleTest.run(null, null);
 	      // once we start the console, then 
 	      // Nachos will loop forever waiting 
 	      // for console input
