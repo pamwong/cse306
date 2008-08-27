@@ -11,6 +11,7 @@ MAKEFILES=Makefile test/Makefile
 
 KERNEL=\
 	nachos/kernel/Nachos.java\
+	nachos/kernel/devices/ConsoleDriver.java\
 	nachos/kernel/devices/DiskDriver.java\
 	nachos/kernel/devices/InterruptHandler.java\
 	nachos/kernel/devices/NetworkDriver.java\
