@@ -35,7 +35,7 @@ public abstract class InterruptHandler
   /**
    * Handler called by the machine when any interrupt occurs.
    */
-  public void handleInterrupt() {
+  final public void handleInterrupt() {
       inHandler = true;
       serviceDevice();
       inHandler = false;
