@@ -3,41 +3,31 @@ ENTRY(__start)
 SECTIONS
 {
   .text  0 : {
-     _ftext = . ;
-    *(.init)
-     eprol  =  .;
     *(.text)
-    *(.fini)
-     etext  =  .;
-     _etext  =  .;
-  } >code
+    _ecode = . ;
+    . = ALIGN(16) ;
+    _frdata = . ;
+    *(.rdata)
+    _etext = . ;
+  }
 
-  .rdata . : {
-	  *(.rdata)
-  } >code
+  . = ALIGN(0x80) ;
 
-  .data ALIGN(0x80) : {
-    _fdata = .;
+  .data ALIGN(16) : {
+    _fdata = . ;
     *(.data)
-    *(.sdata)
     CONSTRUCTORS
-  } >data
+    _edata = . ;
+  }
 
-  _gp = ALIGN(16);
-  edata  =  .;
-  _edata  =  .;
-
-  _fbss = .;
-  .sbss  . : {
-    *(.sbss)
+  .bss ALIGN(16) : {
+    _fbss = . ;
     *(.scommon)
-  } >data
-
-  .bss  . : {
     *(.bss)
     *(COMMON)
-  } >data
+    _ebss = . ;
+  }
 
-  end = .;
-  _end = .;
+  _end = . ;
+
 }
