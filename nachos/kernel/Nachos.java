@@ -194,9 +194,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
    *	the various subsystems, rather than here.
    */
   public static void main(String clArgs[]) {
-    Debug.println('t', "Entering main");
-
     args = clArgs;
+    Debug.init(args);
+    Debug.println('t', "Entering main");
 
     if (java.util.Arrays.asList(args).contains("-z"))
 	System.out.println(copyright);
@@ -206,7 +206,6 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
      * to start the thread scheduler.  The rest gets done once the first
      * Nachos thread is started.
      */
-    Debug.init(args);
     Machine.init(args);
     Scheduler.init(args);
     /*
