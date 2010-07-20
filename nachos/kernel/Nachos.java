@@ -55,8 +55,10 @@ import nachos.kernel.filesys.test.FileSystemTest;
 import nachos.kernel.devices.ConsoleDriver;
 import nachos.kernel.devices.DiskDriver;
 import nachos.kernel.devices.NetworkDriver;
+import nachos.kernel.devices.SerialDriver;
 import nachos.kernel.devices.test.ConsoleTest;
 import nachos.kernel.devices.test.NetworkTest;
+import nachos.kernel.devices.test.SerialTest;
 import nachos.kernel.userprog.test.ProgTest;
 import nachos.kernel.userprog.ExceptionHandler;
 
@@ -105,6 +107,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
   /** Are we going to be using the threads system? */
   private static final boolean THREADS = true;
 
+  /** Are we going to be using serial ports? */
+  private static final boolean SERIAL = true;
+
   /** Array containing the command-line arguments passed to main(). */
   private static String args[];
 
@@ -119,6 +124,9 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
 
   /** Access to the Nachos network. */
   public static NetworkDriver networkDriver;
+
+  /** Access to serial ports. */
+  public static SerialDriver serialDriver;
 
   /**
    * 	Nachos initialization -- performed by first Nachos thread.
@@ -155,6 +163,14 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
     if(NETWORK) {
       networkDriver = new NetworkDriver(args);
       NetworkTest.start(args);
+    }
+
+    /**
+     * If we are going to be using serial ports, then start the driver.
+     */
+    if(SERIAL) {
+	serialDriver = new SerialDriver(args);
+	SerialTest.start(args);
     }
 
     /*
