@@ -108,7 +108,7 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
   private static final boolean THREADS = true;
 
   /** Are we going to be using serial ports? */
-  private static final boolean SERIAL = true;
+  private static final boolean SERIAL = false;
 
   /** Array containing the command-line arguments passed to main(). */
   private static String args[];
