@@ -15,8 +15,10 @@ KERNEL=\
 	nachos/kernel/devices/DiskDriver.java\
 	nachos/kernel/devices/InterruptHandler.java\
 	nachos/kernel/devices/NetworkDriver.java\
+	nachos/kernel/devices/SerialDriver.java \
 	nachos/kernel/devices/test/ConsoleTest.java\
 	nachos/kernel/devices/test/NetworkTest.java\
+	nachos/kernel/devices/test/SerialTest.java \
 	nachos/kernel/filesys/BitMap.java\
 	nachos/kernel/filesys/Directory.java\
 	nachos/kernel/filesys/DirectoryEntry.java\
@@ -55,9 +57,10 @@ MACHINE=machine/Console.java\
 	machine/NachosThread.java\
 	machine/Network.java\
 	machine/Packet.java\
-	machine/RK05Disk.java\
 	machine/PendingInterrupt.java\
+	machine/RK05Disk.java\
 	machine/SegmentDescriptor.java\
+	machine/SerialPort.java\
 	machine/StreamConsole.java\
 	machine/Timer.java\
 	machine/TranslationEntry.java
