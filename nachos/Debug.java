@@ -15,6 +15,7 @@
 //   	'f' -- file system (FILESYS)
 //   	'a' -- address spaces (USER_PROGRAM)
 //   	'n' -- network emulation (NETWORK)
+//	'p' -- serial port (SERIAL)
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
 // Copyright (c) 1998 Rice University.
