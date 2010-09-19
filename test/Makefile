@@ -32,7 +32,7 @@ COFF2NOFF = $(JAVA) nachos.util.Coff2Noff
 
 LDFLAGS = -T script -N
 ASFLAGS = -mips1
-CPPFLAGS = -I$(INCDIR)
+CPPFLAGS = -I$(INCDIR) -B$(GCCDIR)
 
 CFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -fno-builtin
 SFLAGS = -G 0 -I$(INCDIR) -B$(GCCDIR) -c -S -fno-builtin
