@@ -83,7 +83,8 @@ cleanbackup:
 # The Cygwin "make" seems to insist on the Java source files existing
 # even when machine.jar is present, so leave this commented out.
 #
-$(MACHINE): nachos/machine/*.java nachos/util/*.java
-	${JC} nachos/machine/*.java nachos/util/*.java
-	jar cvf machine.jar nachos/machine/*.class nachos/util/*.class
+#$(MACHINE): nachos/machine/*.java nachos/util/*.java javadoc
+#	${JC} nachos/machine/*.java nachos/util/*.java
+#	jar cvf machine.jar nachos/machine/*.class nachos/util/*.class \
+#		doc/machine
 
