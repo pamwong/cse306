@@ -11,7 +11,6 @@ package nachos.kernel.threads.test;
 
 import nachos.Debug;
 import nachos.machine.Timer;
-import nachos.kernel.threads.Scheduler;
 import nachos.kernel.devices.InterruptHandler;
 
 /**

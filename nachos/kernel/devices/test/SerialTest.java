@@ -9,7 +9,6 @@
 package nachos.kernel.devices.test;
 
 import nachos.Debug;
-import nachos.machine.Machine;
 import nachos.machine.NachosThread;
 import nachos.kernel.Nachos;
 import nachos.kernel.threads.Scheduler;

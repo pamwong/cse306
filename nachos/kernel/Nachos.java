@@ -44,12 +44,10 @@
 package nachos.kernel;
 
 import nachos.Debug;
-import nachos.Statistics;
 import nachos.machine.Machine;
 import nachos.machine.NachosThread;
 import nachos.kernel.threads.Scheduler;
 import nachos.kernel.threads.test.ThreadTest;
-import nachos.kernel.threads.test.AlarmTest;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.filesys.test.FileSystemTest;
 import nachos.kernel.devices.ConsoleDriver;

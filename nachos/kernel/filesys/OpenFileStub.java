@@ -71,7 +71,8 @@ class OpenFileStub implements OpenFile {
   public int readAt(byte into[], int index, int numBytes, long position) { 
     int len;
 
-    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
+    if (BLOCKING_FILESYS)
+	Scheduler.yield();
     try {
       file.seek(position);
       len = file.read(into, index, numBytes);
@@ -91,7 +92,8 @@ class OpenFileStub implements OpenFile {
    * @return The number of bytes actually written (0 in case of an error).
    */
   public int writeAt(byte from[], int index, int numBytes, long position) { 
-    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
+    if (BLOCKING_FILESYS)
+	Scheduler.yield();
     try {
       file.seek(position);
       file.write(from, index, numBytes);

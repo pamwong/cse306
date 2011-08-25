@@ -5,7 +5,6 @@
 package nachos.kernel.devices;
 
 import nachos.Debug;
-import nachos.machine.Interrupt;
 import nachos.kernel.threads.Scheduler;
 
 /**

@@ -16,8 +16,6 @@
 
 package nachos.kernel.threads;
 
-import nachos.Debug;
-
 /**
  *
  * This class defines a "synchronized list" -- a list for which

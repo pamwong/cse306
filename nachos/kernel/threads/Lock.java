@@ -9,7 +9,6 @@
 package nachos.kernel.threads;
 
 import nachos.machine.NachosThread;
-import nachos.machine.Interrupt;
 import nachos.Debug;
 
 /**

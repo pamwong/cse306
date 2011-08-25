@@ -11,6 +11,7 @@
 package nachos.kernel.filesys;
 
 import java.io.*;
+
 import nachos.kernel.threads.Scheduler;
 
 /**
@@ -48,7 +49,8 @@ class FileSystemStub extends FileSystem {
   public boolean create(String name, long initialSize) { 
     FileOutputStream fsFile;
 
-    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
+    if (BLOCKING_FILESYS)
+	Scheduler.yield();
     try {
       fsFile = new FileOutputStream(name);
       fsFile.close();    
@@ -70,7 +72,8 @@ class FileSystemStub extends FileSystem {
   public OpenFile open(String name) {
     RandomAccessFile file;
 
-    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
+    if (BLOCKING_FILESYS)
+	Scheduler.yield();
     if (!new File(name).exists())
 	return null;
     try {
@@ -92,7 +95,8 @@ class FileSystemStub extends FileSystem {
   public boolean remove(String name) { 
     File file;
 
-    if (BLOCKING_FILESYS) nachos.kernel.threads.Scheduler.yield();
+    if (BLOCKING_FILESYS)
+	Scheduler.yield();
     file = new File(name);
     return file.delete();
   }

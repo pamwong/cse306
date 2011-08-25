@@ -14,7 +14,6 @@ import nachos.Debug;
 import nachos.machine.Machine;
 import nachos.kernel.Nachos;
 import nachos.kernel.filesys.OpenFile;
-import nachos.kernel.filesys.FileSystem;
 
 /**
  * This class implements some simple test routines for the file system.

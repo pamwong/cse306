@@ -16,7 +16,6 @@ import nachos.kernel.Nachos;
 import nachos.kernel.threads.Scheduler;
 import nachos.kernel.userprog.AddrSpace;
 import nachos.kernel.userprog.UserThread;
-import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.filesys.OpenFile;
 
 /**

@@ -4,10 +4,6 @@ import nachos.Debug;
 import nachos.machine.Packet;
 import nachos.machine.MalformedPacketException;
 import nachos.kernel.Nachos;
-import nachos.kernel.threads.Scheduler;
-import nachos.kernel.threads.Semaphore;
-import nachos.kernel.devices.InterruptHandler;
-import nachos.kernel.devices.NetworkDriver;
 
 /**
  * Class for testing the nachos network.
