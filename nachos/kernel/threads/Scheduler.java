@@ -75,10 +75,9 @@ public class Scheduler {
 
     Debug.println('t', "Scheduling first Nachos thread");
 
-    int oldLevel = Interrupt.setLevel(Interrupt.IntOff);
+    Debug.ASSERT(Interrupt.getLevel() == Interrupt.IntOff);
     nextThread = findNextToRun();
     if (nextThread == null) {
-	Interrupt.setLevel(oldLevel);
 	Debug.print('+', "Scheduler.start(): no NachosThread ready!");
 	return;
     }
@@ -87,7 +86,9 @@ public class Scheduler {
 
     currentThread = nextThread;
     nextThread.switchTo(nextThread);
-    Interrupt.setLevel(oldLevel);
+    // Do not attempt to enable interrupts here; there will be
+    // a race with nextThread.  Interrupts will be enabled in
+    // nextThread when it starts.
 
     // nextThread is now running
   }
