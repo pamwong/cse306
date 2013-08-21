@@ -31,9 +31,11 @@ public class SerialDriver {
     private SerialPort[] units = new SerialPort[SerialPort.NUM_UNITS];
     
     /** SerialPort output queues. */
+    @SuppressWarnings("unchecked")
     private Queue<Byte>[] outqs = new Queue[SerialPort.NUM_UNITS];
     
     /** SerialPort input queues. */
+    @SuppressWarnings("unchecked")
     private Queue<Byte>[] inqs = new Queue[SerialPort.NUM_UNITS];
     
     /** Input semaphores. */

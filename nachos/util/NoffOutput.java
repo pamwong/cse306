@@ -31,6 +31,7 @@ class NoffOutput {
 	}
     }
 
+    @SuppressWarnings("serial")
     public static class OutOfOrderSection extends Exception {};
 
     /*

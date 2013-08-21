@@ -42,7 +42,8 @@ public class Debug {
   /**
    * Exception used to terminate Nachos when an assertion fails.
    */
-  public static class AssertException extends RuntimeException {
+  @SuppressWarnings("serial")
+public static class AssertException extends RuntimeException {
 
       /** An AssertException with a generic message. */
       public AssertException() {

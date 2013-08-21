@@ -136,7 +136,8 @@ private static final String copyright = "Copyright (c) 1992-1993 The Regents of 
    *	Any activities that are to continue must have their own threads
    *	by that point.
    */
-  public void run() {
+  @SuppressWarnings("unused")
+public void run() {
     /*
      * If we are going to be running user programs, then register
      * an exception handler.
