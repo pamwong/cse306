@@ -1,0 +1,131 @@
+
+Homework 0: Tools
+Due September 12, 2013
+The purpose of this assignment is for you to set up the software we will be using this semester. Work through the steps outlined below, and submit your source code repository as indicated. Although the handin requirements are very minimal, there is a lot of "behind-the-scenes" setup work to do. The point of the assignment is for you to do this work now to avoid any unforeseen difficulties, rather than delaying and finding out that you can't make progress on subsequent homeworks because you didn't get your development environment set up properly.
+
+Decide where you will work
+
+    To do the programming assignments this semester, you will need at least the facilities listed below. You should select the place you will work according to your convenience and whether you can gather the necessary facilities for it.
+
+        Internet/Web access. You will use this to read course materials, upload assignment submissions, and possibly to access a remotely located CVS repository shared with your partner.
+
+        C cross-compiler used by NACHOS. You will need this to compile C test programs into MIPS machine code that can run on NACHOS.
+
+        CVS revision control system. You will be required to maintain your code under CVS, and when you submit your assignment you will be submitting the CVS repository. (Note: Although CVS is perfectly adequate for this course, and I would prefer you to use that, this semester I will also accept submissions that contain "git" repositories. These are the only two formats that I will accept; we do not have the manpower to handle the full gamut of possible systems that people might want to use.)
+
+        Java development environment compatible with JDK 1.7. JDK 1.7 is the official environment for the course. You may use other Java systems to develop your code, but whatever you turn in must compile and run under JDK 1.7.
+
+Download the software
+
+    You will definitely need:
+
+        Oracle Java Software Environment (Java SE), version 1.7 (if you don't already have it).
+
+        Nachos CVS repository, as a ZIP file. Alternatively, if you choose to use GIT, then this ZIP file.
+
+        machine.jar
+
+        The machine.jar file contains the part of NACHOS you will not modify -- that is, the part that simulates the computer on which the NACHOS operating system runs. I used to distribute this file in the CVS repository, but I have found that different versions of CVS on different systems treat binary files differently, and a significant number of people were extracting corrupted versions of this file. So, you need to download it separately and put it in a convenient place on your system. Please avoid committing it to the code base that you submit; we will test your code with our own copy, not yours, and it just adds extra kilobytes to everybody's submissions.
+
+        C to MIPS cross-compiler binaries:
+
+            For Windows (requires a basic Cygwin installation).
+
+            For Linux (also works on FreeBSD versions prior to 6.0).
+
+                NOTE: These binaries are linked against C library versions that don't exist on recent versions of Linux. I have verified that under Ubuntu 13.04 that downloading
+                    libc.so.5.4.23 
+                and installing it with symbolic links as shown below will work (of course, you need to set up the links so that they point to the place where you downloaded the libc.so.5.4.23 on your system, not on mine):
+                $ ls -l /lib/libc.so.5 /lib/ld-linux.so.1 lrwxrwxrwx 1 root root 18 Aug 21 13:00 /lib/ld-linux.so.1 -> /lib/ld-linux.so.2 lrwxrwxrwx 1 root root 33 Aug 21 12:57 /lib/libc.so.5 -> /home/gene/CSE306/libc.so.5.4.23
+
+            For Linux (64 bit).
+
+                These binaries were built in Fall 2009 on a system that identified as follows:
+                Linux compute1.cs.sunysb.edu 2.6.18-128.1.16.el5.centos.plus #1 SMP Wed Jul 1 13:01:46 EDT 2009 x86_64 x86_64 x86_64 GNU/Linux
+                If for some reason you need to attempt to rebuild from source yourself, I have placed the relevant GNU tarballs here. 
+
+            For Mac OS X.
+
+                NOTE: These binaries were built in Fall 2008 by Markus Lacay, using GCC 3.2.2 sources. If for some reason you need to attempt to rebuild from source yourself, I have placed the relevant GNU tarballs here. 
+
+        Note: This is the only part of the project work for which you must use the binaries I supply. The cross-compiler is needed to compile the C programs that run under NACHOS, and it needs to produce MIPS object files that are compatible with NACHOS, which means that you can't just use some random C compiler that happens to be installed on your computer. I have provided "Makefiles" for the "make" utility on Unix or Cygwin that can be used to compile and link the test applications. To use these, you would need a Unix-like command shell on whatever system you are using, and you will need to have the "make" utility installed. On Linux or Macs, this should be simple to do, if it is not automatically done for you. On Windows, the easiest thing to do is to use Cygwin. Otherwise, it should be possible to configure Eclipse to launch the cross-compiler, though I have not personally looked into how to do that.
+        CVS (or GIT) revision control system. I recommend that you work on the project using Eclipse (more below). Current versions of Eclipse (Kepler) have built-in clients for CVS and for GIT. The CVS client assumes the existence of a CVS server that serves your repository. The CVS server can be on a remote system, but you can also configure your own system as a CVS server. This is easiest to do under Linux or on a Mac. It can also be done under Windows, but it is a little more involved and might possibly create some security risks for your computer. A CVS system, which can be used together with the OpenSSH client for secure access to a CVS repository on your computer, can be installed as an optional package under Cygwin. GIT can be used with a repository stored in the local filesystem on your computer, but in order to share your commits with those of your partner you will need a way to "push" and "pull" between your computer and your partner's computer. If you use some kind of public server as an intermediary, please place some kind of access control on your repository so that only you and your partner can see it. If somebody else in the course can see your code, you are exposing yourself to potential charges of Academic Dishonesty, should they decide to submit your code instead of doing the homework themselves.
+
+    You might also need or want:
+
+        Eclipse, which is a Java-based IDE. My best recommendation is for you to use this for your Java development and CVS operations. You can do almost everything for this course in Eclipse. Once the cross-compiler has been set up, you can even configure that in Eclipse as an external tool that can be launched from within the IDE. I have provided here some information on setting up Eclipse to work with NACHOS.
+
+        A Cygwin installation, which is free and has lots of other useful stuff. If you are using Windows, I highly recommend this. Don't install everything to start with. First run the installer, and do a basic install. After that, add additional packages as desired. Mostly likely you would want
+
+            The GNU Make build tool. I distribute NACHOS with Makefiles for use with this tool.
+
+            The GNU tar archiver. You will use this to bundle up your CVS repository for submission over the Web. 
+
+Find a homework partner
+
+    You are strongly encouraged (but not forced) to work with a partner on the homework assignments. (NOTE: Students registered for CSE 587 must work individually on their assignments.) For most people, I think it will be advantageous to work with a partner. All partnerships must be officially registered when you submit each assignment, and each partner will be required to compare their own contribution to that of their partner. If at some point you need to "divorce" your partner, that is OK, but common courtesy dictates that you inform your partner of your desire for a divorce, and that you try to do this at the beginning of a homework cycle, rather than the end. If you cannot find a partner, contact me and I will try to match you with someone.
+
+Set up your Source Code Repository
+
+    Read and follow the instructions available here to initialize your CVS source code repository.
+
+Check out a working copy of NACHOS
+
+    Following the instructions here or here, check out a working copy of NACHOS.
+
+    NOTE: Make sure your current directory is not under CVS repository when you check out, or else you will make a mess and have to start over.
+
+Install machine.jar
+
+    Place the machine.jar you downloaded in a convenient place where your build environment can find it. I typically put it in the top-level directory of the working copy of nachos. You will need to check the "classpath" that you are using to compile and run NACHOS to make sure that machine.jar is listed there in its proper location. If you are using make to do the build, then the classpath is specified in the Makefile in the top-level nachos directory and also in the test subdirectory. If you are using the run scripts I supplied to launch NACHOS, you have to change it in those as well. If you are using Eclipse, you will have edit the "build path" project preferences and add machine.jar as an "external jar file" library.
+
+Compile NACHOS
+
+    I have configured NACHOS so that you can build it using the make command-line build tool by going to the top-level (nachos) directory of your working area and typing make. This assumes you have some version of make on your system and that a suitable javac is in your PATH.
+
+    If you use your favorite IDE, then you need to figure out how to set up an appropriate project so that you can build NACHOS. This typically involves pointing the IDE at the NACHOS source tree and adding machine.jar to the search path used during compilation and execution. See here for Eclipse-specific information.
+
+Run the threads demo
+
+    Go to the top-level nachos directory and type run. You should see printout that looks like that shown below.
+
+    NOTE: Depending on your PATH setting and/or the system you are using you may have to type ./run. Or, if you have no Unix-like shell on your system, you will have to read the run script and set up a method of starting NACHOS that is suitable for your environment.
+    Entering main *** thread 1 looped 0 times *** thread 2 looped 0 times *** thread 1 looped 1 times *** thread 2 looped 1 times *** thread 1 looped 2 times *** thread 2 looped 2 times *** thread 1 looped 3 times *** thread 2 looped 3 times *** thread 1 looped 4 times *** thread 2 looped 4 times No threads ready or runnable, and no pending interrupts. Assuming the program completed. Machine halting! Ticks: total 150, idle 0, system 150, user 0 Disk I/O: reads 0, writes 0 Console I/O: reads 0, writes 0 Paging: faults 0 Network I/O: packets received 0, sent 0
+
+    If you see this, you are OK. If you don't see this, then you need to find out why NACHOS didn't compile correctly.
+
+Set up and test the cross-compiler
+
+    You need to have downloaded the cross-compiler binaries appropriate for your chosen platform (see above). Unpack the downloaded file into a convenient empty directory, for example mips-gcc. Once the archive is unpacked, you should see the following files (dates and sizes may vary):
+    -rwxr-xr-x 1 stark wheel 309320 Aug 20 04:02 ar -rwxr-xr-x 1 stark wheel 636324 Aug 20 04:02 as -rwxr-xr-x 1 stark wheel 2155888 Aug 20 04:02 cc1 -rwxr-xr-x 1 stark wheel 94140 Aug 20 04:02 cpp -rwxr-xr-x 1 stark wheel 101900 Aug 20 04:02 cpp0 -rwxr-xr-x 1 stark wheel 92508 Aug 20 04:02 gcc -rwxr-xr-x 1 stark wheel 456032 Aug 20 04:02 ld -rwxr-xr-x 1 stark wheel 301352 Aug 20 04:02 nm -rwxr-xr-x 1 stark wheel 309320 Aug 20 04:02 ranlib
+
+    Go to the nachos/test directory and read the Makefile into an editor. Change the value assigned to the GCCDIR variable near the beginning so that it corresponds to where you put the binaries on your system. Exit the editor.
+
+    Go back to nachos/test and then run make halt. Hopefully you will see something like:
+    /cse306/Archive/mips-gcc/gcc -G 0 -I../test -B/cse306/Archive/mips-gcc/ -c -fno-builtin halt.c /cse306/Archive/mips-gcc/ld -T script -N start.o halt.o -o halt.coff rm halt.o /usr/local/jdk/bin/java -classpath '../machine.jar' nachos.util.Coff2Noff halt.coff halt Loading 1 sections: ".text", filepos 0x80, mempos 0x0, size 0x110 rm halt.coff
+
+    If you didn't see this, you need to investigate based on whatever error messages you got.
+
+    If you did see the above output, then go to the nachos/test directory (note that this is a subdirectory one-level down from the top-level nachos directory, and there is also a version of the "run" script there for convenience) and type
+    % ./run -x halt
+
+    You should see:
+    Entering main *** thread 1 looped 0 times *** thread 2 looped 0 times *** thread 1 looped 1 times *** thread 2 looped 1 times *** thread 1 looped 2 times *** thread 2 looped 2 times *** thread 1 looped 3 times *** thread 2 looped 3 times *** thread 1 looped 4 times *** thread 2 looped 4 times Shutdown, initiated by user program. Machine halting! Ticks: total 302, idle 0, system 290, user 12 Disk I/O: reads 0, writes 0 Console I/O: reads 0, writes 0 Paging: faults 0 Network I/O: packets received 0, sent 0
+
+    If you see the above output (maybe with slightly different numbers of "ticks" reported), NACHOS is set up and ready to go.
+
+    For some common problems that people have encountered in setting up the cross-compiler, together with possible solutions, see this page.
+
+Create a file README_HW0 in the top-level nachos directory.
+
+    Go to the top-level directory of your working copy of the NACHOS source and use an editor to create a file called README_HW0. Put something interesting in this file for me to read. Use cvs add to schedule the file for addition to your CVS repository, and then cvs commit to actually add it. Put an informative message in the CVS commit log.
+
+Tag your repository with the symbolic name HW0
+
+    Using the cvs tag command as described here, tag your source code repository with the symbolic identifier HW0.
+
+Submit your source code repository
+
+    Using the instructions here as a guide, create a gzipped tar archive REPO.tar.gz of your CVS repository. Upload the file REPO.tar.gz via the Homework 0 Submission Form. The uploading script will subject the file you upload to various sanity checks, and will reject it if its contents are not according to the instructions above. If your upload is rejected, read the error message, correct what you did wrong, and try again. After uploading the file, don't forget to answer the other questions on the form and click on "Submit". 
+
+

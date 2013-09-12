@@ -15,7 +15,7 @@
 GCCDIR = /home/david/306workspace/mips-gcc/
 
 # Change the following to point to where you have Java executables installed.
-JAVADIR = /usr/bin/
+JAVADIR = /usr/local/jdk/bin/
 
 # Uncomment the following when running on Windows.
 #JAVA= $(JAVADIR)java -classpath '..\machine.jar'
